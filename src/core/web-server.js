@@ -1,7 +1,29 @@
 const express = require('express');
-const sequelize = require('../models/database')
+const { sequelize } = require('../models/database');
 const dotenv = require('dotenv');
 
+const { Piece} = require('../models/workshop/piece');
+const { Piece_ref} = require('../models/workshop/pieces_ref');
+const { Company_order} = require('../models/workshop/company_order');
+const { Company_order_piece} = require('../models/workshop/company_order_piece');
+const {Supplier } = require('../models/workshop/supplier');
+const {Operation } = require('../models/workshop/operation');
+const {Gamme } = require('../models/workshop/gamme');
+const {Gamme_operation } = require('../models/workshop/gamme_operation');
+const {Gamme_production } = require('../models/workshop/gamme_production');
+const {Gamme_produce_operation } = require('../models/workshop/gamme_produce_operation');
+const {Machine } = require('../models/workshop/machines');
+const{Devis} = require('../models/commerce/devis');
+const{Devis_piece} = require('../models/commerce/devis_piece');
+const{Order} = require('../models/commerce/order');
+const{Order_piece} = require('../models/commerce/order_piece');
+const{Post} = require('../models/users/post');
+const{Role} = require('../models/users/roles');
+const{User} = require('../models/users/user');
+const{User_post} = require('../models/users/user_post');
+
+const roleRoutes = require('../controllers/users/role_controller')
+const userRoutes = require('../controllers/users/user_controller')
 
 dotenv.config()
 class WebServer {
@@ -12,7 +34,6 @@ class WebServer {
         this.app = express();
         this.port = process.env.PORT;
         this.server = undefined;
-        this.tablesConnections();
         sequelize.sync()
             .then(() => {
                 console.log('Database connected and synchronized');
@@ -20,22 +41,89 @@ class WebServer {
             .catch(err => {
                 console.error('Unable to connect to the database:', err);
             });
-        this.setupRoutes();
+        this.tablesConnections();
+        this.initializeRoutes();
        // sequelize.sync();
-        //sequelize.sync({force:true});
+       // sequelize.sync({force:true});
     }
 
     tablesConnections() {
-        const { Piece, Piece_ref } = require('../models/workshop/');
+        // Piece
         Piece.hasMany(Piece_ref, { foreignKey: 'id_piece' });
         Piece_ref.belongsTo(Piece, { foreignKey: 'id_piece' });
+
+        Piece.hasMany(Devis_piece, { foreignKey: 'id_piece' });
+        Devis_piece.belongsTo(Piece, { foreignKey: 'id_piece' });
+
+        Piece.hasMany(Order_piece, { foreignKey: 'id_piece' });
+        Order_piece.belongsTo(Piece, { foreignKey: 'id_piece' });
+
+        Piece.hasMany(Company_order_piece, { foreignKey: 'id_piece' });
+        Company_order_piece.belongsTo(Piece, { foreignKey: 'id_piece' });
+
+        Piece.hasMany(Gamme, { foreignKey: 'id_piece' });
+        Gamme.belongsTo(Piece, { foreignKey: 'id_piece' });
+
+        // Company_order
+        Company_order.belongsTo(Supplier, { foreignKey: 'id_supplier' });
+        Supplier.hasMany(Company_order, { foreignKey: 'id_supplier' });
+
+        Company_order.hasMany(Company_order_piece, { foreignKey: 'id_order' });
+        Company_order_piece.belongsTo(Company_order, { foreignKey: 'id_order' });
+
+        // Devis
+        Devis.hasMany(Devis_piece, { foreignKey: 'id_devis' });
+        Devis_piece.belongsTo(Devis, { foreignKey: 'id_devis' });
+
+        Devis.hasMany(Order, { foreignKey: 'id_devis' });
+        Order.belongsTo(Devis, { foreignKey: 'id_devis' });
+
+        // Order
+        Order.hasMany(Order_piece, { foreignKey: 'id_order' });
+        Order_piece.belongsTo(Order, { foreignKey: 'id_order' });
+
+        // Gamme
+        Gamme.hasMany(Gamme_operation, { foreignKey: 'id_gamme' });
+        Gamme_operation.belongsTo(Gamme, { foreignKey: 'id_gamme' });
+
+        Gamme.hasMany(Gamme_production, { foreignKey: 'id_gamme' });
+        Gamme_production.belongsTo(Gamme, { foreignKey: 'id_gamme' });
+
+        Gamme_produce_operation.belongsTo(Post, { foreignKey: 'id_post' });
+        Post.hasMany(Gamme_produce_operation, { foreignKey: 'id_post' });
+
+        Gamme_produce_operation.belongsTo(Machine, { foreignKey: 'id_machine' });
+        Machine.hasMany(Gamme_produce_operation, { foreignKey: 'id_machine' });
+
+        // Operation
+        Operation.belongsTo(Post, { foreignKey: 'id_post' });
+        Post.hasMany(Operation, { foreignKey: 'id_post' });
+
+        Operation.belongsTo(Machine, { foreignKey: 'id_machine' });
+        Machine.hasMany(Operation, { foreignKey: 'id_machine' });
+
+        // User
+        User.belongsTo(Role, { foreignKey: 'id_role' });
+        Role.hasMany(User, { foreignKey: 'id_role' });
+
+        User.hasMany(User_post, { foreignKey: 'id_user' });
+        User_post.belongsTo(User, { foreignKey: 'id_user' });
+
+        User.hasMany(Devis, { foreignKey: 'id_user' });
+        Devis.belongsTo(User, { foreignKey: 'id_user' });
+
+        User.hasMany(Order, { foreignKey: 'id_user' });
+        Order.belongsTo(User, { foreignKey: 'id_user' });
+
+        User.hasMany(Gamme, { foreignKey: 'id_user' });
+        Gamme.belongsTo(User, { foreignKey: 'id_user' });
+
     }
 
 
-    setupRoutes() {
-        this.app.get('/', (req, res) => {
-            res.send('Hello World!');
-        });
+    initializeRoutes() {
+        this.app.use('/user', userRoutes.initializeRoutes());
+        this.app.use('/role', roleRoutes.initializeRoutes())
     }
 
     start() {
@@ -50,3 +138,8 @@ class WebServer {
 }
 
 module.exports = WebServer;
+
+
+//docker exec -it 9ca8b072a20b8db341ff8e290a0bfce541138b75881ce43c2f72cfe5ce24cdbe bash
+//psql -U postgres -d master_project
+//\d <table_name>

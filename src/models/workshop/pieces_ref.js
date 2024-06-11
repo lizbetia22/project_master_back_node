@@ -1,7 +1,7 @@
 const {DataTypes } = require('sequelize');
 const {sequelize} = require('../database');
 
-const Piece_ref = sequelize.define('Piece_ref', {
+exports.Piece_ref = sequelize.define('Piece_ref', {
     id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
@@ -20,5 +20,3 @@ const Piece_ref = sequelize.define('Piece_ref', {
     tableName: 'pieces_ref',
     timestamps: false,
 });
-
-module.exports = Piece_ref;
