@@ -2,6 +2,7 @@ const express = require('express');
 const { sequelize } = require('../models/database');
 const dotenv = require('dotenv');
 const bodyParser = require('body-parser');
+const { initializeConfigMiddlewares, initializeErrorMiddlwares } = require('./middlewares');
 
 const { Piece} = require('../models/workshop/piece');
 const { Piece_ref} = require('../models/workshop/pieces_ref');
@@ -25,6 +26,7 @@ const{User_post} = require('../models/users/user_post');
 
 const roleRoutes = require('../controllers/users/role_controller')
 const userRoutes = require('../controllers/users/user_controller')
+const cors = require("cors");
 
 dotenv.config()
 class WebServer {
@@ -34,6 +36,15 @@ class WebServer {
     constructor() {
         this.app = express();
         this.app.use(bodyParser.json());
+
+        console.log("ici")
+        const corsOptions = {
+            origin: 'http://localhost:3000', // Autorise seulement les requêtes depuis ce domaine
+            methods: ['GET', 'POST', 'PUT', 'DELETE'], // Méthodes autorisées
+            allowedHeaders: ['Content-Type', 'Authorization'] // En-têtes autorisés
+        };
+        this.app.use(cors(corsOptions));
+
         this.port = process.env.PORT;
         this.server = undefined;
         sequelize.sync()
@@ -45,6 +56,8 @@ class WebServer {
             });
         this.tablesConnections();
         this.initializeRoutes();
+        initializeConfigMiddlewares(this.app);
+        initializeErrorMiddlwares(this.app);
        // sequelize.sync();
        // sequelize.sync({force:true});
     }
@@ -146,3 +159,15 @@ module.exports = WebServer;
 //psql -U postgres -d master_project
 //\d <table_name>
 // r6scg3qxvlryi platform sh id
+
+//Start server platform sh
+// export SECRET_KEY="YOURSECRETKEYGOESHERE"
+// export JWT_EXPIRES_IN="1h"
+//
+// export HOST="postgresql.internal"
+// export PASSWORD_DB="main"
+// export APP_DB="main"
+// export DATABASE_NAME="main"
+// export DIALECT="postgres"
+//
+// node index.js
