@@ -34,7 +34,7 @@ class WebServer {
     constructor() {
         this.app = express();
         this.app.use(bodyParser.json());
-        this.port = process.env.PORT;
+        this.port = 3339;
         this.server = undefined;
         sequelize.sync()
             .then(() => {
