@@ -145,3 +145,4 @@ module.exports = WebServer;
 //docker exec -it 9ca8b072a20b8db341ff8e290a0bfce541138b75881ce43c2f72cfe5ce24cdbe bash
 //psql -U postgres -d master_project
 //\d <table_name>
+// r6scg3qxvlryi platform sh id
