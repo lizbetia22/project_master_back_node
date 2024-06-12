@@ -27,12 +27,17 @@ services:
       - app-network
     volumes:
       - .:/app
-      - /app/node_modules
     environment:
-      - CONNECTION_STRING=postgresql://tpadmin:tpadmin@postgresql:5432/tpadmin
+      - CONNECTION_STRING=postgresql://postgres:admin@postgresql:5432/master_project
       - PORT=3333
       - NODE_ENV=development
-    command: npm run start
+      - DATABASE_NAME=master_project
+      - APP_DB=postgres
+      - PASSWORD_DB=admin
+      - HOST=postgresql
+      - DIALECT=postgres
+      - SECRET_KEY=MASTER
+      - JWT_EXPIRES_IN=1H
 
 volumes:
   data:

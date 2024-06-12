@@ -27,3 +27,11 @@ exports.getAllUsers = async () => {
         throw error;
     }
 };
+
+exports.findUserByEmail = async (email) => {
+    try {
+        return await User.findOne({ where: { email } });
+    } catch (error) {
+        throw error;
+    }
+};

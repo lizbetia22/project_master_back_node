@@ -1,6 +1,7 @@
 const express = require('express');
 const { sequelize } = require('../models/database');
 const dotenv = require('dotenv');
+const bodyParser = require('body-parser');
 
 const { Piece} = require('../models/workshop/piece');
 const { Piece_ref} = require('../models/workshop/pieces_ref');
@@ -32,6 +33,7 @@ class WebServer {
     server;
     constructor() {
         this.app = express();
+        this.app.use(bodyParser.json());
         this.port = process.env.PORT;
         this.server = undefined;
         sequelize.sync()
