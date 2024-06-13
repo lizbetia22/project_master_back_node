@@ -14,7 +14,7 @@ const initJsonHandlerMiddlware = (app) => app.use(express.json());
 const middlewareStatic = (app) => app.use(express.static('public'));
 
 const corsOptions = {
-    origin: 'http://localhost:3000',
+    origin: ['http://localhost:3000', 'https://lizbetia22.github.io'],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     preflightContinue: false,
     optionsSuccessStatus: 204,
