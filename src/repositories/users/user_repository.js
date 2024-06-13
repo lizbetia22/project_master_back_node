@@ -1,5 +1,6 @@
 const { User } = require('../../models/users/user'); // Assuming your model file is in ../models
 const bcrypt = require('bcryptjs');
+const {Role} = require("../../models/users/roles");
 
 
 exports.createUser = async (userData) => {
@@ -30,7 +31,13 @@ exports.getAllUsers = async () => {
 
 exports.findUserByEmail = async (email) => {
     try {
-        return await User.findOne({ where: { email } });
+        return await User.findOne({
+            where: { email },
+            include: {
+                model: Role,
+                attributes: ['name']
+            }
+        });
     } catch (error) {
         throw error;
     }

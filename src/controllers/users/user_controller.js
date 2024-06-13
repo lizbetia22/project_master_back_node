@@ -66,8 +66,9 @@ router.post('/login',
 
             const login = bcrypt.compareSync(password, foundUser.password);
             if (login) {
+                const roleName = foundUser.Role.name;
                 const token = jwt.sign(
-                    { id: foundUser.id, role: foundUser.id_role },
+                    { id: foundUser.id, role: roleName  },
                     process.env.SECRET_KEY,
                     { expiresIn: process.env.JWT_EXPIRES_IN }
                 );
