@@ -7,7 +7,12 @@ exports.Piece_ref = sequelize.define('Piece_ref', {
         autoIncrement: true,
         primaryKey: true,
     },
-    id_piece: {
+    id_piece_component: {
+        foreignKey: true,
+        type: DataTypes.INTEGER,
+        allowNull: false,
+    },
+    id_piece_create: {
         foreignKey: true,
         type: DataTypes.INTEGER,
         allowNull: false,

@@ -24,8 +24,12 @@ const{Role} = require('../models/users/roles');
 const{User} = require('../models/users/user');
 const{User_post} = require('../models/users/user_post');
 
-const roleRoutes = require('../controllers/users/role_controller')
-const userRoutes = require('../controllers/users/user_controller')
+const roleRoutes = require('../controllers/users/role_controller');
+const userRoutes = require('../controllers/users/user_controller');
+const pieceRoutes = require('../controllers/workshop/piece_controller');
+const pieceRefRoutes = require('../controllers/workshop/piece_ref_controller');
+const gammeRoutes = require('../controllers/workshop/gamme_controller');
+
 const cors = require("cors");
 
 dotenv.config()
@@ -64,8 +68,13 @@ class WebServer {
 
     tablesConnections() {
         // Piece
-        Piece.hasMany(Piece_ref, { foreignKey: 'id_piece' });
-        Piece_ref.belongsTo(Piece, { foreignKey: 'id_piece' });
+        // Piece.hasMany(Piece_ref, { foreignKey: 'id_piece' });
+        // Piece_ref.belongsTo(Piece, { foreignKey: 'id_piece' });
+        Piece.hasMany(Piece_ref, { foreignKey: 'id_piece_component' });
+        Piece_ref.belongsTo(Piece, { foreignKey: 'id_piece_component'});
+
+        Piece.hasMany(Piece_ref, { foreignKey: 'id_piece_create' });
+        Piece_ref.belongsTo(Piece, { foreignKey: 'id_piece_create'});
 
         Piece.hasMany(Devis_piece, { foreignKey: 'id_piece' });
         Devis_piece.belongsTo(Piece, { foreignKey: 'id_piece' });
@@ -138,7 +147,10 @@ class WebServer {
 
     initializeRoutes() {
         this.app.use('/user', userRoutes.initializeRoutes());
-        this.app.use('/role', roleRoutes.initializeRoutes())
+        this.app.use('/role', roleRoutes.initializeRoutes());
+        this.app.use('/piece', pieceRoutes.initializeRoutes());
+        this.app.use('/piece_ref', pieceRefRoutes.initializeRoutes());
+        this.app.use('/gamme', gammeRoutes.initializeRoutes());
     }
 
     start() {

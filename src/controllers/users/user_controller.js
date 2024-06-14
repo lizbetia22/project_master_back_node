@@ -68,7 +68,7 @@ router.post('/login',
             if (login) {
                 const roleName = foundUser.Role.name;
                 const token = jwt.sign(
-                    { id: foundUser.id, role: roleName  },
+                    { id: foundUser.id, role: roleName, name: foundUser.name },
                     process.env.SECRET_KEY,
                     { expiresIn: process.env.JWT_EXPIRES_IN }
                 );
