@@ -70,11 +70,11 @@ class WebServer {
         // Piece
         // Piece.hasMany(Piece_ref, { foreignKey: 'id_piece' });
         // Piece_ref.belongsTo(Piece, { foreignKey: 'id_piece' });
-        Piece.hasMany(Piece_ref, { foreignKey: 'id_piece_component' });
-        Piece_ref.belongsTo(Piece, { foreignKey: 'id_piece_component'});
+        Piece.hasMany(Piece_ref, { foreignKey: 'id_piece_component', as: 'ComponentPieces' });
+        Piece_ref.belongsTo(Piece, { foreignKey: 'id_piece_component', as: 'ComponentPiece' });
 
-        Piece.hasMany(Piece_ref, { foreignKey: 'id_piece_create' });
-        Piece_ref.belongsTo(Piece, { foreignKey: 'id_piece_create'});
+        Piece.hasMany(Piece_ref, { foreignKey: 'id_piece_create', as: 'CreatedPieces' });
+        Piece_ref.belongsTo(Piece, { foreignKey: 'id_piece_create', as: 'CreatedPiece' });
 
         Piece.hasMany(Devis_piece, { foreignKey: 'id_piece' });
         Devis_piece.belongsTo(Piece, { foreignKey: 'id_piece' });

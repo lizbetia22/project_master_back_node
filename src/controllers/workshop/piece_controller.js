@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const pieceRepository = require('../../repositories/workshop/piece_repository');
+const pieceRefRepository = require('../../repositories/workshop/piece_ref_repository');
 
 router.post('/seeder', async (req, res) => {
     const pieces = [
@@ -84,5 +85,57 @@ router.delete('/delete/:id', async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 });
+
+router.put('/update/ref/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { piece, components } = req.body;
+
+        if (!piece && !components) {
+            return res.status(400).json({ message: 'Body is required' });
+        }
+
+        const updatedPiece = await pieceRepository.updatePiece(id, piece);
+
+        let updatedComponents;
+        if (components) {
+            updatedComponents = await pieceRefRepository.updateComponentPiecesByCreateId(id, components);
+        }
+
+        return res.status(200).json({ piece: updatedPiece, components: updatedComponents });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+
+router.post('/create/ref', async (req, res) => {
+    try {
+        const { piece, components } = req.body;
+
+        if (!piece) {
+            return res.status(400).json({ message: 'Piece data is required' });
+        }
+
+        const createdPiece = await pieceRepository.createPiece(piece);
+
+        let createdComponents;
+        if (components && Array.isArray(components)) {
+            createdComponents = await Promise.all(components.map(async (component) => {
+                return await pieceRefRepository.createPieceRef({
+                    id_piece_create: createdPiece.id,
+                    ...component
+                });
+            }));
+        }
+
+        return res.status(201).json({ piece: createdPiece, components: createdComponents });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+
+
 
 exports.initializeRoutes = () => router;

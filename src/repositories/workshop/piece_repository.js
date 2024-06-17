@@ -18,6 +18,7 @@ exports.findPieceById = async (id) => {
     }
 };
 
+
 exports.createPiece = async (piece) => {
     try {
         return await Piece.create(piece);

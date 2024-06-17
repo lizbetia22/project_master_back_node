@@ -53,4 +53,16 @@ router.get('/components/:id_piece_create', async (req, res) => {
     }
 });
 
+router.put('/components/update/:id_piece_create', async (req, res) => {
+    try {
+        const { id_piece_create } = req.params;
+        const components = req.body;
+
+        const updatedComponents = await pieceRefRepository.updateComponentPiecesByCreateId(id_piece_create, components);
+        res.json(updatedComponents);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 exports.initializeRoutes = () => router;
