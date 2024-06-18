@@ -29,6 +29,12 @@ const userRoutes = require('../controllers/users/user_controller');
 const pieceRoutes = require('../controllers/workshop/piece_controller');
 const pieceRefRoutes = require('../controllers/workshop/piece_ref_controller');
 const gammeRoutes = require('../controllers/workshop/gamme_controller');
+const postRoutes = require('../controllers/users/post_controller');
+const machineRoutes = require('../controllers/workshop/machine_controller');
+const operationRoutes = require('../controllers/workshop/operation_controller');
+const gammeOperationRoutes = require('../controllers/workshop/gamme_operation_controller');
+const gammeProduceOperationRoutes = require('../controllers/workshop/gamme_produce_operation_controller');
+const userPostRoutes = require('../controllers/users/user_post_controller');
 
 const cors = require("cors");
 
@@ -40,12 +46,10 @@ class WebServer {
     constructor() {
         this.app = express();
         this.app.use(bodyParser.json());
-
-        console.log("ici")
         const corsOptions = {
-            origin: 'http://localhost:3000', // Autorise seulement les requêtes depuis ce domaine
-            methods: ['GET', 'POST', 'PUT', 'DELETE'], // Méthodes autorisées
-            allowedHeaders: ['Content-Type', 'Authorization'] // En-têtes autorisés
+            origin: 'http://localhost:3000',
+            methods: ['GET', 'POST', 'PUT', 'DELETE'],
+            allowedHeaders: ['Content-Type', 'Authorization']
         };
         this.app.use(cors(corsOptions));
 
@@ -68,8 +72,6 @@ class WebServer {
 
     tablesConnections() {
         // Piece
-        // Piece.hasMany(Piece_ref, { foreignKey: 'id_piece' });
-        // Piece_ref.belongsTo(Piece, { foreignKey: 'id_piece' });
         Piece.hasMany(Piece_ref, { foreignKey: 'id_piece_component', as: 'ComponentPieces' });
         Piece_ref.belongsTo(Piece, { foreignKey: 'id_piece_component', as: 'ComponentPiece' });
 
@@ -119,6 +121,9 @@ class WebServer {
         Gamme_produce_operation.belongsTo(Machine, { foreignKey: 'id_machine' });
         Machine.hasMany(Gamme_produce_operation, { foreignKey: 'id_machine' });
 
+        Gamme_operation.hasMany(Gamme_produce_operation, { foreignKey: 'id_gamme_operation' });
+        Gamme_produce_operation.belongsTo(Gamme_operation, { foreignKey: 'id_gamme_operation' });
+
         // Operation
         Operation.belongsTo(Post, { foreignKey: 'id_post' });
         Post.hasMany(Operation, { foreignKey: 'id_post' });
@@ -142,6 +147,9 @@ class WebServer {
         User.hasMany(Gamme, { foreignKey: 'id_user' });
         Gamme.belongsTo(User, { foreignKey: 'id_user' });
 
+        User_post.belongsTo(User, { foreignKey: 'id_user' });
+        User_post.belongsTo(Post, { foreignKey: 'id_post' });
+
     }
 
 
@@ -151,6 +159,12 @@ class WebServer {
         this.app.use('/piece', pieceRoutes.initializeRoutes());
         this.app.use('/piece_ref', pieceRefRoutes.initializeRoutes());
         this.app.use('/gamme', gammeRoutes.initializeRoutes());
+        this.app.use('/post', postRoutes.initializeRoutes());
+        this.app.use('/machine', machineRoutes.initializeRoutes());
+        this.app.use('/operation', operationRoutes.initializeRoutes());
+        this.app.use('/gamme-operation', gammeOperationRoutes.initializeRoutes());
+        this.app.use('/gamme-produce-operation', gammeProduceOperationRoutes.initializeRoutes());
+        this.app.use('/user-post', userPostRoutes.initializeRoutes());
     }
 
     start() {

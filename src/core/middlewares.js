@@ -50,6 +50,28 @@ const tokenMiddlware = (app) => {
             { path: [{ url: "/user/login", methods: ["POST"] },
                     { url: "/user/seeder", methods: ["POST"] },
                     { url: "/user/all", methods: ["GET"] },
+                    { url: "/post/seeder", methods: ["POST"] },
+                    { url: "/post/all", methods: ["GET"] },
+                    { url: "/post/:id", methods: ["GET"] },
+                    { url: "/machine/seeder", methods: ["POST"] },
+                    { url: "/machine/all", methods: ["GET"] },
+                    { url: "/machine/:id", methods: ["GET"] },
+                    { url: "/user-post/seeder", methods: ["POST"] },
+                    { url: "/user-post/all", methods: ["GET"] },
+                    { url: "/user-post/:id", methods: ["GET"] },
+                    { url: "/operation/seeder", methods: ["POST"] },
+                    { url: "/operation/all", methods: ["GET"] },
+                    { url: "/operation/:id", methods: ["GET"] },
+                    { url: "/gamme-operation/seeder", methods: ["POST"] },
+                    { url: "/gamme-operation/delete/:id", methods: ["DELETE"] },
+                    { url: "/gamme-operation/update/:id", methods: ["PUT"] },
+                    { url: "/gamme-operation/all", methods: ["GET"] },
+                    { url: "/gamme-operation/:id", methods: ["GET"] },
+                    { url: "/gamme-produce-operation/seeder", methods: ["POST"] },
+                    { url: "/gamme-produce-operation/delete/:id", methods: ["DELETE"] },
+                    { url: "/gamme-produce-operation/update/:id", methods: ["PUT"] },
+                    { url: "/gamme-produce-operation/all", methods: ["GET"] },
+                    { url: "/gamme-produce-operation/:id", methods: ["GET"] },
                     { url: "/role/all", methods: ["GET"] },
                     { url: "/role/seeder", methods: ["POST"] },
                     { url: "/piece/seeder", methods: ["POST"] },
@@ -74,7 +96,6 @@ const tokenMiddlware = (app) => {
 }
 
 exports.initializeConfigMiddlewares = (app) => {
-    console.log("ici")
     initJsonHandlerMiddlware(app);
     initLoggerMiddlware(app);
     middlewareStatic(app);

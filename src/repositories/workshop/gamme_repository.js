@@ -1,6 +1,7 @@
 const {Gamme} = require("../../models/workshop/gamme");
 const {Piece} = require("../../models/workshop/piece");
 const {User} = require("../../models/users/user");
+const {Role} = require("../../models/users/roles");
 
 exports.getAllGammes = async () => {
     try {
@@ -8,7 +9,13 @@ exports.getAllGammes = async () => {
             order: [['id', 'ASC']],
             include: [
                 { model: Piece, attributes: ['name'] },
-                { model: User, attributes: ['name'] }
+                {
+                    model: User,
+                    attributes: ['name'],
+                    include: [
+                        { model: Role, attributes: ['name'] }
+                    ]
+                }
             ],
             attributes: ['id', 'name']
         });

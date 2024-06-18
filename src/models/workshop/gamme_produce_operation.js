@@ -7,6 +7,12 @@ exports.Gamme_produce_operation = sequelize.define('Gamme_produce_operation', {
         autoIncrement: true,
         primaryKey: true
     },
+
+    id_gamme_operation: {
+        foreignKey: true,
+        type: DataTypes.INTEGER,
+        allowNull: false
+    },
     id_post: {
         foreignKey: true,
         type: DataTypes.INTEGER,
