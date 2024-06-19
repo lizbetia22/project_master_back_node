@@ -1,5 +1,8 @@
 const express = require('express');
 const GammeOperationRepository = require('../../repositories/workshop/gamme_operation_repository');
+const {Gamme_operation} = require("../../models/workshop/gamme_operation");
+const {Gamme} = require("../../models/workshop/gamme");
+const {sequelize} = require("../../models/database");
 const router = express.Router();
 
 router.post('/seeder', async (req, res) => {
@@ -78,6 +81,42 @@ router.delete('/delete/:id', async (req, res) => {
         } else {
             res.status(500).json({ error: err.message });
         }
+    }
+});
+
+router.get('/gamme/:id_gamme', async (req, res, next) => {
+    const id_gamme = req.params.id_gamme;
+    try {
+        const gammeOperations = await GammeOperationRepository.findByGammeId(id_gamme);
+        res.json(gammeOperations);
+    } catch (error) {
+        next(error);
+    }
+});
+
+router.post('/create/gamme', async (req, res) => {
+    const { id_piece, id_user, name, operations } = req.body;
+
+    if (!id_piece || !id_user || !name || !operations || !Array.isArray(operations)) {
+        return res.status(400).json({ message: 'Missing required fields' });
+    }
+
+    let transaction;
+    try {
+        transaction = await sequelize.transaction();
+        const gamme = await Gamme.create({ id_piece, id_user, name }, { transaction });
+        const gammeOperations = await Promise.all(operations.map(operation =>
+            Gamme_operation.create({
+                id_gamme: gamme.id,
+                id_operation: operation.id_operation,
+                time: operation.time
+            }, { transaction })
+        ));
+        await transaction.commit();
+        res.status(201).json({ gamme, gammeOperations });
+    } catch (error) {
+        if (transaction) await transaction.rollback();
+        res.status(500).json({ message: error.message });
     }
 });
 

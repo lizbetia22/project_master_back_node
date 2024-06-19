@@ -21,9 +21,39 @@ router.post('/seeder', async (req, res) => {
             password: 'azerty'
         },
         {
+            id_role: 2,
+            name: 'Kev Loe',
+            email: 'kev.loe@gmail.com',
+            password: 'azerty'
+        },
+        {
+            id_role: 2,
+            name: 'Zag Fui',
+            email: 'zag.fui@gmail.com',
+            password: 'azerty'
+        },
+        {
             id_role: 3,
             name: 'Ben Doe',
             email: 'bendoe@gmail.com',
+            password: 'azerty'
+        },
+        {
+            id_role: 3,
+            name: 'Julian Gen',
+            email: 'julian.gen@gmail.com',
+            password: 'azerty'
+        },
+        {
+            id_role: 3,
+            name: 'Tom Ben',
+            email: 'tom.ben@gmail.com',
+            password: 'azerty'
+        },
+        {
+            id_role: 3,
+            name: 'Ron Fen',
+            email: 'ron.fen@gmail.com',
             password: 'azerty'
         }
     ];
@@ -49,6 +79,16 @@ router.get('/all', async (req, res) => {
     }
 });
 
+router.post('/create', async (req, res) => {
+    try {
+        const userData = req.body;
+        const user = await userRepository.createUser(userData);
+        res.status(201).json(user);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Failed to create user.');
+    }
+});
 router.post('/login',
     body('email').isEmail(),
     body('password').isLength({ min: 4 }),

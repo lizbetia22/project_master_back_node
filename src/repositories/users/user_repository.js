@@ -15,7 +15,7 @@ exports.createUser = async (userData) => {
             password: hashedPassword,
         };
 
-        await User.create(user);
+        return await User.create(user);
     } catch (error) {
         throw error;
     }

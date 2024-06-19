@@ -8,16 +8,22 @@ exports.getAllGammes = async () => {
         return await Gamme.findAll({
             order: [['id', 'ASC']],
             include: [
-                { model: Piece, attributes: ['name'] },
+                {
+                    model: Piece,
+                    attributes: ['name'],
+                },
                 {
                     model: User,
-                    attributes: ['name'],
+                    attributes: ['id', 'name'],
                     include: [
-                        { model: Role, attributes: ['name'] }
-                    ]
-                }
+                        {
+                            model: Role,
+                            attributes: ['name'],
+                        },
+                    ],
+                },
             ],
-            attributes: ['id', 'name']
+            attributes: ['id', 'name'],
         });
     } catch (error) {
         throw error;

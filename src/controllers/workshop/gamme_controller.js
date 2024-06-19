@@ -4,11 +4,12 @@ const gammeRepository = require('../../repositories/workshop/gamme_repository');
 
 router.post('/seeder', async (req, res) => {
     const gammes = [
-        { id_piece: 1, id_user: 2, name: "Gamme de fabrication C" },
-        { id_piece: 2, id_user: 1, name: "Gamme de fabrication A" },
-        { id_piece: 3, id_user: 2, name: "Gamme de fabrication B" },
-        { id_piece: 4, id_user: 1, name: "Gamme de fabrication D" },
-        { id_piece: 5, id_user: 2, name: "Gamme de fabrication E" },
+        { id_piece: 1, id_user: 5, name: "Gamme de fabrication C" },
+        { id_piece: 2, id_user: 6, name: "Gamme de fabrication A" },
+        { id_piece: 3, id_user: 7, name: "Gamme de fabrication B" },
+        { id_piece: 4, id_user: 8, name: "Gamme de fabrication D" },
+        { id_piece: 5, id_user: 5, name: "Gamme de fabrication E" },
+        { id_piece: 5, id_user: 6, name: "Gamme de fabrication F" },
     ];
 
     try {
