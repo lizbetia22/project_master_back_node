@@ -1,5 +1,6 @@
 const {Gamme_operation} = require("../../models/workshop/gamme_operation");
 const {sequelize} = require("../../models/database");
+const {Gamme} = require("../../models/workshop/gamme");
 
 exports.createGammeOperation = async (gammeOperationData) => {
     try {
@@ -82,6 +83,41 @@ exports.findByGammeId = async (id_gamme) => {
 
         return results;
     } catch (error) {
+        throw error;
+    }
+};
+
+exports.updateGammeAndOperations = async (id, gammeData, operationsData) => {
+    let transaction;
+    try {
+        transaction = await sequelize.transaction();
+
+        const gamme = await Gamme.findByPk(id, { transaction });
+        if (!gamme) {
+            console.error(`Gamme with id ${id} not found`);
+        }
+
+        await gamme.update(gammeData, { transaction });
+
+        // Delete existing operations
+        await Gamme_operation.destroy({
+            where: { id_gamme: id },
+            transaction
+        });
+
+        // Create new operations
+        const newOperations = await Promise.all(operationsData.map(operation =>
+            Gamme_operation.create({
+                id_gamme: id,
+                id_operation: operation.id_operation,
+                time: operation.time
+            }, { transaction })
+        ));
+
+        await transaction.commit();
+        return { gamme, operations: newOperations };
+    } catch (error) {
+        if (transaction) await transaction.rollback();
         throw error;
     }
 };

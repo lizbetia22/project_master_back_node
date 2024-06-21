@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const gammeRepository = require('../../repositories/workshop/gamme_repository');
+const GammeOperationRepository = require("../../repositories/workshop/gamme_operation_repository");
 
 router.post('/seeder', async (req, res) => {
     const gammes = [
@@ -58,5 +59,17 @@ router.get('/:id', async (req, res) => {
     }
 });
 
+router.delete('/delete/:id', async (req, res) => {
+    try {
+        await gammeRepository.deleteGamme(req.params.id);
+        res.status(200).json({ message: 'Gamme successfully deleted' });
+    } catch (err) {
+        if (err.message.includes('not found')) {
+            res.status(404).json({ error: err.message });
+        } else {
+            res.status(500).json({ error: err.message });
+        }
+    }
+});
 
 exports.initializeRoutes = () => router;

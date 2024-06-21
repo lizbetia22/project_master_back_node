@@ -120,5 +120,21 @@ router.post('/create/gamme', async (req, res) => {
     }
 });
 
+router.put('/update/gammeOperations/:id', async (req, res) => {
+    const { id } = req.params;
+    const { id_piece, id_user, name, operations } = req.body;
+
+    if (!id_piece || !id_user || !name || !operations || !Array.isArray(operations)) {
+        return res.status(400).json({ message: 'Missing required fields' });
+    }
+
+    try {
+        const result = await GammeOperationRepository.updateGammeAndOperations(id, { id_piece, id_user, name }, operations);
+        res.status(200).json(result);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
 
 exports.initializeRoutes = () => router;

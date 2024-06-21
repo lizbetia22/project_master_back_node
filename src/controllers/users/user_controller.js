@@ -79,6 +79,16 @@ router.get('/all', async (req, res) => {
     }
 });
 
+router.get('/workshop', async (req, res) => {
+    try {
+        const users = await userRepository.findUsersByRoleWorkshop();
+        res.status(200).json(users);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Failed to get users from workshop.');
+    }
+});
+
 router.post('/create', async (req, res) => {
     try {
         const userData = req.body;

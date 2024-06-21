@@ -42,3 +42,13 @@ exports.findUserByEmail = async (email) => {
         throw error;
     }
 };
+
+exports.findUsersByRoleWorkshop = async () => {
+    try {
+        return await User.findAll({
+            where: { id_role: 3  },
+        });
+    } catch (error) {
+        throw error;
+    }
+};
