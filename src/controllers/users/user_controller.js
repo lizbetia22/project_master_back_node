@@ -10,50 +10,32 @@ router.post('/seeder', async (req, res) => {
     const users = [
         {
             id_role: 1,
-            name: 'Admin admin',
+            name: 'Admin',
             email: 'admin@gmail.com',
             password: 'azerty'
         },
         {
             id_role: 2,
             name: 'John Doe',
-            email: 'johndoe@gmail.com',
-            password: 'azerty'
-        },
-        {
-            id_role: 2,
-            name: 'Kev Loe',
-            email: 'kev.loe@gmail.com',
-            password: 'azerty'
-        },
-        {
-            id_role: 2,
-            name: 'Zag Fui',
-            email: 'zag.fui@gmail.com',
+            email: 'john.doe@gmail.com',
             password: 'azerty'
         },
         {
             id_role: 3,
             name: 'Ben Doe',
-            email: 'bendoe@gmail.com',
+            email: 'ben.doe@gmail.com',
             password: 'azerty'
         },
         {
             id_role: 3,
+            name: 'Rhone Fen',
+            email: 'rhone.fen@gmail.com',
+            password: 'azerty'
+        },
+        {
+            id_role: 4,
             name: 'Julian Gen',
             email: 'julian.gen@gmail.com',
-            password: 'azerty'
-        },
-        {
-            id_role: 3,
-            name: 'Tom Ben',
-            email: 'tom.ben@gmail.com',
-            password: 'azerty'
-        },
-        {
-            id_role: 3,
-            name: 'Ron Fen',
-            email: 'ron.fen@gmail.com',
             password: 'azerty'
         }
     ];

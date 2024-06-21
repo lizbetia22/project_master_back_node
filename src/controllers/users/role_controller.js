@@ -6,7 +6,8 @@ router.post('/seeder', async (req, res) => {
     const roles = [
         { name: 'Admin' },
         { name: 'Commercial' },
-        { name: 'Workshop' }
+        { name: 'Workshop' },
+        { name: 'Responsible' }
     ];
 
     try {

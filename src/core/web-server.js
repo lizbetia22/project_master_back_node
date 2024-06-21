@@ -131,6 +131,9 @@ class WebServer {
         Operation.belongsTo(Machine, { foreignKey: 'id_machine' });
         Machine.hasMany(Operation, { foreignKey: 'id_machine' });
 
+        Machine.belongsTo(Post, { foreignKey: 'id_post' });
+        Post.hasMany(Machine, {foreignKey: 'id_post'});
+
         // User
         User.belongsTo(Role, { foreignKey: 'id_role' });
         Role.hasMany(User, { foreignKey: 'id_role' });

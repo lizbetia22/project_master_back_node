@@ -5,15 +5,9 @@ const router = express.Router();
 router.post('/seeder', async (req, res) => {
     const gammeProduceOperations = [
         { id_gamme_operation:1, id_post: 1, id_machine: 1, name: "Milling ", time: 15 },
-        { id_gamme_operation:3, id_post: 3, id_machine: 2, name: "Drilling ", time: 55 },
-        { id_gamme_operation:5, id_post: 7, id_machine: 5, name: "Welding ", time: 37 },
-        { id_gamme_operation:7, id_post: 7, id_machine: 7, name: "Forming ", time: 17 },
-        { id_gamme_operation:8, id_post: 4, id_machine: 2, name: "Assembling ", time: 21 },
-        { id_gamme_operation:9, id_post: 6, id_machine: 1, name: "Polishing ", time: 47 },
-        { id_gamme_operation:10,id_post: 5,id_machine: 3, name: "Casting ", time: 58 },
-        { id_gamme_operation:11, id_post: 9, id_machine: 9, name: "Forging ", time: 11 },
-        { id_gamme_operation:12, id_post: 2, id_machine: 6, name: "Stamping ", time: 29 },
-        { id_gamme_operation:14, id_post: 8, id_machine: 4, name: "Painting ", time: 19 }
+        { id_gamme_operation:2, id_post: 2, id_machine: 2, name: "Drilling ", time: 55 },
+        { id_gamme_operation:3, id_post: 3, id_machine: 3, name: "Welding ", time: 37 },
+        { id_gamme_operation:4, id_post: 4, id_machine: 4, name: "Forming ", time: 17 }
     ];
 
     try {

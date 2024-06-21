@@ -24,3 +24,31 @@ exports.getPostById = async (id) => {
     }
 };
 
+exports.updatePost = async (id, updateData) => {
+    try {
+        const [updated] = await Post.update(updateData, {
+            where: { id: id }
+        });
+        if (updated) {
+            return await Post.findByPk(id);
+        }
+        console.error('Post not found');
+    } catch (error) {
+        throw error;
+    }
+};
+
+exports.deletePost = async (id) => {
+    try {
+        const deleted = await Post.destroy({
+            where: { id: id }
+        });
+        if (deleted) {
+            return true;
+        }
+       console.error('Post not found');
+    } catch (error) {
+        throw error;
+    }
+};
+

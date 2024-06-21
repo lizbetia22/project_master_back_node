@@ -11,9 +11,7 @@ router.post('/seeder', async (req, res) => {
         { id_post: 5, id_machine: 5, name: "Assembling ", time: 33 },
         { id_post: 6, id_machine: 6, name: "Polishing ", time: 45 },
         { id_post: 7, id_machine: 7, name: "Casting ", time: 60 },
-        { id_post: 8, id_machine: 8, name: "Forging ", time: 39 },
-        { id_post: 9, id_machine: 9, name: "Stamping ", time: 58 },
-        { id_post: 10, id_machine: 10, name: "Painting ", time: 14 },
+        { id_post: 8, id_machine: 8, name: "Forging ", time: 39 }
     ];
 
     try {
@@ -52,6 +50,28 @@ router.post('/create', async (req, res) => {
     try {
         const operation = await operationRepository.createOperation(req.body);
         res.status(201).json(operation);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+router.put('/update/:id', async (req, res) => {
+    try {
+        const operation = await operationRepository.updateOperation(req.params.id, req.body);
+        res.status(200).json(operation);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+router.delete('/delete/:id', async (req, res) => {
+    try {
+        const result = await operationRepository.deleteOperation(req.params.id);
+        if (result) {
+            res.status(200).send('Operation deleted successfully');
+        } else {
+            res.status(404).json({ error: 'Operation not found' });
+        }
     } catch (err) {
         res.status(500).json({ error: err.message });
     }

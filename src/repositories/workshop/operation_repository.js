@@ -24,3 +24,31 @@ exports.getOperationById = async (id) => {
     }
 };
 
+exports.updateOperation = async (id, updateData) => {
+    try {
+        const [updated] = await Operation.update(updateData, {
+            where: { id: id }
+        });
+        if (updated) {
+            return await Operation.findByPk(id);
+        }
+       console.error('Operation not found');
+    } catch (error) {
+        throw error;
+    }
+};
+
+exports.deleteOperation = async (id) => {
+    try {
+        const deleted = await Operation.destroy({
+            where: { id: id }
+        });
+        if (deleted) {
+            return true;
+        }
+       console.error('Operation not found');
+    } catch (error) {
+        throw error;
+    }
+};
+

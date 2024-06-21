@@ -7,6 +7,11 @@ exports.Machine = sequelize.define('Machine', {
         autoIncrement: true,
         primaryKey: true,
     },
+    id_post: {
+        foreignKey: true,
+        type: DataTypes.INTEGER,
+        allowNull: false,
+    },
     name: {
         type: DataTypes.STRING(250),
         allowNull: false,

@@ -5,9 +5,8 @@ const router = express.Router();
 
 router.post('/seeder', async (req, res) => {
     const userPosts = [
-        { id_user: 1, id_post: [1, 3, 4] },
-        { id_user: 2, id_post: [5, 6] },
-        { id_user: 3, id_post: [7, 1, 2, 4] },
+        { id_user: 4, id_post: [7, 1, 2, 4] },
+        { id_user: 5, id_post: [5, 6] },
     ];
 
     try {
@@ -61,12 +60,16 @@ router.get('/posts/gammes', async (req, res) => {
         const userPosts = await userPostRepository.getAllUserPosts();
         const userGammes = await gammePostRepository.getAllGammes();
 
+        // Log the userPosts and userGammes for debugging
+        console.log('userPosts:', JSON.stringify(userPosts, null, 2));
+        console.log('userGammes:', JSON.stringify(userGammes, null, 2));
+
         const filteredUsers = userPosts
-            .filter(up => up.User.Role && up.User.Role.name === 'Workshop')
+            .filter(up => up.User.Role && (up.User.Role.name === 'Workshop' || up.User.Role.name === 'Responsible'))
             .map(up => ({
                 id: up.id_user,
                 userName: up.User.name,
-                roleName: 'Workshop',
+                roleName: up.User.Role.name,  // Correctly assign the role name
                 postName: up.Post.name,
             }));
 
@@ -89,7 +92,7 @@ router.get('/posts/gammes', async (req, res) => {
         }, []);
 
         userGammes.forEach(ug => {
-            if (ug.User.Role && ug.User.Role.name === 'Workshop') {
+            if (ug.User.Role && (ug.User.Role.name === 'Workshop' || ug.User.Role.name === 'Responsible')) {
                 const userData = result.find(u => u.id === ug.User.id);
                 if (userData && !userData.gammeName.includes(ug.name)) {
                     userData.gammeName.push(ug.name);
@@ -97,10 +100,14 @@ router.get('/posts/gammes', async (req, res) => {
             }
         });
 
+        // Log the final result for debugging
+        console.log('result:', JSON.stringify(result, null, 2));
+
         res.json(result);
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
 });
+
 
 exports.initializeRoutes = () => router;
