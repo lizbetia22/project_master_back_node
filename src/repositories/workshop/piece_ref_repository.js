@@ -19,7 +19,11 @@ exports.findPieceRefById = async (id) => {
 
 exports.findAllPieceRef = async () => {
     try {
-        return await Piece_ref.findAll();
+        return await Piece_ref.findAll(
+            {
+                order: [['id', 'ASC']]
+            }
+        );
     } catch (error) {
         throw error;
     }

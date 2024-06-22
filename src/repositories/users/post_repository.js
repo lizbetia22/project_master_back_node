@@ -1,4 +1,6 @@
 const { Post } = require('../../models/users/post');
+const {Role} = require("../../models/users/roles");
+const {Machine} = require("../../models/workshop/machines");
 
 exports.createPost = async (postData) => {
     try {
@@ -10,7 +12,15 @@ exports.createPost = async (postData) => {
 
 exports.getAllPosts = async () => {
     try {
-        return await Post.findAll();
+        return await Post.findAll(
+            {
+                order: [['id', 'ASC']],
+                include: {
+                    model: Machine,
+                    attributes: ['id']
+                }
+            }
+        );
     } catch (error) {
         throw error;
     }

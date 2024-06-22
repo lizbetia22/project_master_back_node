@@ -1,4 +1,6 @@
 const { Operation } = require('../../models/workshop/operation');
+const {Post} = require("../../models/users/post");
+const {Machine} = require("../../models/workshop/machines");
 
 exports.createOperation = async (operationData) => {
     try {
@@ -10,11 +12,24 @@ exports.createOperation = async (operationData) => {
 
 exports.getAllOperations = async () => {
     try {
-        return await Operation.findAll();
+        return await Operation.findAll({
+            order: [['id', 'ASC']],
+            include: [
+                {
+                    model: Post,
+                    attributes: ['name']
+                },
+                {
+                    model: Machine,
+                    attributes: ['name']
+                }
+            ]
+        });
     } catch (error) {
         throw error;
     }
 };
+
 
 exports.getOperationById = async (id) => {
     try {

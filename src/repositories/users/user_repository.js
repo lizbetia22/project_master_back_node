@@ -23,7 +23,11 @@ exports.createUser = async (userData) => {
 
 exports.getAllUsers = async () => {
     try {
-        return await User.findAll();
+        return await User.findAll(
+            {
+                order: [['id', 'ASC']]
+            }
+        );
     } catch (error) {
         throw error;
     }

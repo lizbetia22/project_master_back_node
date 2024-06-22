@@ -10,7 +10,11 @@ exports.createRole = async (roleData) => {
 
 exports.getAllRoles = async () => {
     try {
-        return await Role.findAll();
+        return await Role.findAll(
+            {
+                order: [['id', 'ASC']]
+            }
+        );
     } catch (error) {
         throw error;
     }

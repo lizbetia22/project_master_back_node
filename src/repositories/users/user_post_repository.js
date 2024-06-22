@@ -31,6 +31,8 @@ exports.createUserPost = async ({ id_user, id_post }) => {
 exports.getAllUserPosts = async () => {
     try {
         return await User_post.findAll({
+
+            order: [['id', 'ASC']],
             include: [
                 {
                     model: User,

@@ -1,4 +1,6 @@
 const { Machine } = require('../../models/workshop/machines');
+const {Post} = require("../../models/users/post");
+const {Operation} = require("../../models/workshop/operation");
 
 exports.createMachine = async (machineData) => {
     try {
@@ -10,7 +12,18 @@ exports.createMachine = async (machineData) => {
 
 exports.getAllMachines = async () => {
     try {
-        return await Machine.findAll();
+        return await Machine.findAll({
+            order: [['id', 'ASC']],
+            include: [{
+                model: Post,
+                attributes: ['id','name']
+            },
+                {
+                    model: Operation,
+                    attributes: ['id']
+                }
+            ]
+        });
     } catch (error) {
         throw error;
     }

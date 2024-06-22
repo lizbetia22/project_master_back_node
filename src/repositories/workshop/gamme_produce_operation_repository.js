@@ -15,6 +15,8 @@ exports.createGammProduceOperation = async (gammeProduceOperationData) => {
 exports.getAllGammeProduceOperations = async () => {
     try {
         return await Gamme_produce_operation.findAll({
+
+            order: [['id', 'ASC']],
             include: [
                 {
                     model: Gamme_operation,

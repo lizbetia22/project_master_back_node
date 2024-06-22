@@ -12,7 +12,11 @@ exports.createGammeOperation = async (gammeOperationData) => {
 
 exports.getAllGammeOperations = async () => {
     try {
-        return await Gamme_operation.findAll();
+        return await Gamme_operation.findAll(
+            {
+                order: [['id', 'ASC']]
+            }
+        );
     } catch (error) {
         throw error;
     }
