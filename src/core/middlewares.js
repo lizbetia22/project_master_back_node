@@ -14,14 +14,15 @@ const initJsonHandlerMiddlware = (app) => app.use(express.json());
 const middlewareStatic = (app) => app.use(express.static('public'));
 
 const corsOptions = {
-    origin: ['http://localhost:3000', 'https://lizbetia22.github.io'],
+    // origin: ['http://localhost:3000', 'https://lizbetia22.github.io'],
+    origin: 'https://lizbetia22.github.io',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     preflightContinue: false,
     optionsSuccessStatus: 204,
 };
 
-// const middlewareCors = (app) => app.use(cors(corsOptions));
-const middlewareCors = (app) => app.use(cors());
+const middlewareCors = (app) => app.use(cors(corsOptions));
+// const middlewareCors = (app) => app.use(cors());
 
 const initLoggerMiddlware = (app) => {
     app.use((req, res, next) => {
