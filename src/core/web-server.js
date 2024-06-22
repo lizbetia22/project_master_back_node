@@ -67,7 +67,7 @@ class WebServer {
         initializeConfigMiddlewares(this.app);
         initializeErrorMiddlwares(this.app);
        // sequelize.sync();
-       sequelize.sync({force:true});
+       // sequelize.sync({force:true});
     }
 
     tablesConnections() {
