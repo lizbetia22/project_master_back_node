@@ -5,6 +5,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const {sign} = require("jsonwebtoken");
 const { body, validationResult } = require('express-validator');
+const userPostRepository = require("../../repositories/users/user_post_repository");
 
 router.post('/seeder', async (req, res) => {
     const users = [
@@ -126,6 +127,19 @@ router.get('/refresh/:id_user', async (req, res) => {
         );
 
         res.status(200).json({ token });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Internal server error.');
+    }
+});
+
+router.get('/posts/:id_user', async (req, res) => {
+    try {
+        const id_user = req.params.id_user;
+
+        const user_posts = await userRepository.getPostsByUserId({ id_user });
+
+        res.status(200).json(user_posts);
     } catch (error) {
         console.error(error);
         res.status(500).send('Internal server error.');

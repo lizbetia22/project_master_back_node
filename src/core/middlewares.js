@@ -50,6 +50,7 @@ const tokenMiddlware = (app) => {
             { path: [{ url: "/user/login", methods: ["POST"] },
                     { url: "/user/seeder", methods: ["POST"] },
                     { url: "/user/all", methods: ["GET"] },
+                    { url: "/user/posts/:id", methods: ["GET"] },
                     { url: "/post/seeder", methods: ["POST"] },
                     { url: "/post/all", methods: ["GET"] },
                     { url: "/post/create", methods: ["POST"] },

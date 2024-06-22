@@ -1,6 +1,8 @@
 const { User } = require('../../models/users/user'); // Assuming your model file is in ../models
 const bcrypt = require('bcryptjs');
 const {Role} = require("../../models/users/roles");
+const {User_post} = require("../../models/users/user_post");
+const {Post} = require("../../models/users/post");
 
 
 exports.createUser = async (userData) => {
@@ -55,4 +57,20 @@ exports.findUsersByRoleWorkshop = async () => {
     } catch (error) {
         throw error;
     }
-};
+}
+
+exports.getPostsByUserId = async (id_user) => {
+    try {
+        const user_id = id_user.id_user
+
+        return await User_post.findAll({
+            include: {
+                model: Post,
+                attributes: ['id','name']
+            },
+            where: { id_user: user_id},
+        });
+    } catch (error) {
+        throw error;
+    }
+}
