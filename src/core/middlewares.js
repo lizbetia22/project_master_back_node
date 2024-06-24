@@ -16,12 +16,13 @@ const middlewareStatic = (app) => app.use(express.static('public'));
 const corsOptions = {
     origin: 'https://lizbetia22.github.io',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    header: 'X-Requested-With,content-type',
     credentials: true,
     optionsSuccessStatus: 200,
 };
 
-const middlewareCors = (app) => app.use(cors());
 // const middlewareCors = (app) => app.use(cors());
+const middlewareCors = (app) => app.use(cors());
 
 const initLoggerMiddlware = (app) => {
     app.use((req, res, next) => {
