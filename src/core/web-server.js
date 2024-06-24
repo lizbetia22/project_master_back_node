@@ -45,14 +45,6 @@ class WebServer {
     server;
     constructor() {
         this.app = express();
-        this.app.use(bodyParser.json());
-        const corsOptions = {
-            origin: 'http://localhost:3000',
-            methods: ['GET', 'POST', 'PUT', 'DELETE'],
-            allowedHeaders: ['Content-Type', 'Authorization']
-        };
-        this.app.use(cors(corsOptions));
-
         this.port = process.env.PORT;
         this.server = undefined;
         sequelize.sync()

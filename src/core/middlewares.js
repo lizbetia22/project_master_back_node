@@ -16,7 +16,6 @@ const middlewareStatic = (app) => app.use(express.static('public'));
 const corsOptions = {
     origin: 'https://lizbetia22.github.io',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    preflightContinue: false,
     credentials: true,
     optionsSuccessStatus: 200,
 };
