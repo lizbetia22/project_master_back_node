@@ -20,7 +20,7 @@ const corsOptions = {
     optionsSuccessStatus: 200,
 };
 
-const middlewareCors = (app) => app.use(cors(corsOptions));
+const middlewareCors = (app) => app.use(cors());
 // const middlewareCors = (app) => app.use(cors());
 
 const initLoggerMiddlware = (app) => {
