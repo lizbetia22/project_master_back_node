@@ -50,12 +50,13 @@ class WebServer {
         const corsOptions = {
             origin: 'https://lizbetia22.github.io',
             methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-            headers: 'X-Requested-With,content-type',
+            headers: 'X-Requested-With,content-type,Authorization',
             preflightContinue: false,
             credentials: true,
             optionsSuccessStatus: 200,
         };
         this.app.use(cors(corsOptions));
+
 
         this.port = process.env.PORT;
         this.server = undefined;
