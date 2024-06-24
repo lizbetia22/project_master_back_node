@@ -17,6 +17,7 @@ const corsOptions = {
     origin: 'https://lizbetia22.github.io',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     header: 'X-Requested-With,content-type',
+    preflightContinue: false,
     credentials: true,
     optionsSuccessStatus: 200,
 };
