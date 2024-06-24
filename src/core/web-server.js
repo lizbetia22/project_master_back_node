@@ -45,6 +45,7 @@ class WebServer {
     server;
     constructor() {
         this.app = express();
+        this.app.use(bodyParser.json());
         this.app.options('*', cors())
         this.port = process.env.PORT;
         this.server = undefined;

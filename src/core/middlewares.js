@@ -23,7 +23,7 @@ const corsOptions = {
 };
 
 // const middlewareCors = (app) => app.use(cors());
-const middlewareCors = (app) => app.use(cors());
+const middlewareCors = (app) => app.use(cors(corsOptions));
 
 const initLoggerMiddlware = (app) => {
     app.use((req, res, next) => {
