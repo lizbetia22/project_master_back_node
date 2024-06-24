@@ -46,7 +46,17 @@ class WebServer {
     constructor() {
         this.app = express();
         this.app.use(bodyParser.json());
-        this.app.options('*', cors())
+
+        const corsOptions = {
+            origin: 'https://lizbetia22.github.io',
+            methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+            headers: 'X-Requested-With,content-type',
+            preflightContinue: false,
+            credentials: true,
+            optionsSuccessStatus: 200,
+        };
+        this.app.use(cors(corsOptions));
+
         this.port = process.env.PORT;
         this.server = undefined;
         sequelize.sync()
