@@ -55,6 +55,8 @@ class WebServer {
             credentials: true,
             optionsSuccessStatus: 200,
         };
+        this.app.options('*', cors(corsOptions));
+
         this.app.use(cors(corsOptions));
 
 
