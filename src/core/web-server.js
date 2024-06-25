@@ -6,9 +6,9 @@ const { initializeConfigMiddlewares, initializeErrorMiddlwares } = require('./mi
 
 const { Piece} = require('../models/workshop/piece');
 const { Piece_ref} = require('../models/workshop/pieces_ref');
-const { Company_order} = require('../models/workshop/company_order');
-const { Company_order_piece} = require('../models/workshop/company_order_piece');
-const {Supplier } = require('../models/workshop/supplier');
+const { Company_order} = require('../models/commerce/company_order');
+const { Company_order_piece} = require('../models/commerce/company_order_piece');
+const {Supplier } = require('../models/commerce/supplier');
 const {Operation } = require('../models/workshop/operation');
 const {Gamme } = require('../models/workshop/gamme');
 const {Gamme_operation } = require('../models/workshop/gamme_operation');
@@ -35,6 +35,13 @@ const operationRoutes = require('../controllers/workshop/operation_controller');
 const gammeOperationRoutes = require('../controllers/workshop/gamme_operation_controller');
 const gammeProduceOperationRoutes = require('../controllers/workshop/gamme_produce_operation_controller');
 const userPostRoutes = require('../controllers/users/user_post_controller');
+const devisRoutes = require('../controllers/commerce/devis_controller');
+const devisPieceRoutes = require('../controllers/commerce/devis_piece_controller');
+const orderRoutes = require('../controllers/commerce/order_controller');
+const orderPieceRoutes = require('../controllers/commerce/order_piece_controller');
+const supplierRoutes = require('../controllers/commerce/supplier_controller');
+const companyOrderRoutes = require('../controllers/commerce/company_order_controller');
+const companyOrderPieceRoutes = require('../controllers/commerce/company_order_piece_controller');
 
 const cors = require("cors");
 
@@ -178,6 +185,13 @@ class WebServer {
         this.app.use('/gamme-operation', gammeOperationRoutes.initializeRoutes());
         this.app.use('/gamme-produce-operation', gammeProduceOperationRoutes.initializeRoutes());
         this.app.use('/user-post', userPostRoutes.initializeRoutes());
+        this.app.use('/devis', devisRoutes.initializeRoutes());
+        this.app.use('/devis-piece', devisPieceRoutes.initializeRoutes());
+        this.app.use('/order', orderRoutes.initializeRoutes());
+        this.app.use('/order-piece', orderPieceRoutes.initializeRoutes());
+        this.app.use('/supplier', supplierRoutes.initializeRoutes());
+        this.app.use('/company-order', companyOrderRoutes.initializeRoutes());
+        this.app.use('/company-order-piece', companyOrderPieceRoutes.initializeRoutes());
     }
 
     start() {
