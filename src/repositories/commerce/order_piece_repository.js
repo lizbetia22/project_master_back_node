@@ -4,6 +4,7 @@ const { Order } = require('../../models/commerce/order');
 const {User} = require("../../models/users/user");
 const PDFDocument = require("pdfkit");
 const {createWriteStream} = require("fs");
+const PDFTable = require('pdfkit-table');
 
 exports.createOrderPiece = async (orderPieceData) => {
     try {
@@ -109,54 +110,76 @@ exports.createFacturePdf = async (orderId) => {
 
         if (!orderPieces || orderPieces.length === 0) {
             console.error('No order pieces found for order ID:', orderId);
-            throw new Error('No order pieces found');
         }
 
-        // Create a document
         const doc = new PDFDocument();
         const chunks = [];
         let result;
 
-        // Pipe its output to an array buffer
         doc.on('data', (chunk) => chunks.push(chunk));
         doc.on('end', () => {
             result = Buffer.concat(chunks);
         });
 
-        // Iterate over each order piece and add details to the PDF
-        for (let i = 0; i < orderPieces.length; i++) {
-            const orderPiece = orderPieces[i];
-            const dateOrder = new Date(orderPiece.Order.date_order);
-            const formattedDate = dateOrder.toISOString().split('T')[0];
+        doc.fontSize(16).text(`Facture - N°${orderId}`, { align: 'center' });
+        doc.moveDown();
+        doc.font('Helvetica-Bold').fontSize(12).text(`Date de commande: ${new Date(orderPieces[0].Order.date_order).toISOString().split('T')[0]}`);
+        doc.text(`Utilisateur: ${orderPieces[0].Order.User.name}`);
+        doc.moveDown();
 
-            doc.fontSize(16).text(`Facture - Order Piece ID: ${orderPiece.id}`, { align: 'center' });
-            doc.moveDown();
-            doc.fontSize(12).text(`Date de commande: ${formattedDate}`);
-            doc.text(`Utilisateur: ${orderPiece.Order.User.name}`);
-            doc.moveDown();
+        const tableTop = 150;
+        const itemCodeX = 50;
+        const descriptionX = 150;
+        const quantityX = 280;
+        const priceX = 370;
+        const rowHeight = 20;
 
-            doc.text('Piece:');
-            doc.text(`  - ${orderPiece.Piece.name}`);
-            doc.moveDown();
+        doc.fontSize(10)
+            .text('', itemCodeX, tableTop)
+            .text('Pièce', descriptionX, tableTop)
+            .text('Quantité', quantityX, tableTop)
+            .text('Prix', priceX, tableTop);
 
-            doc.text('Quantities:');
-            doc.text(`  - ${orderPiece.quantity}`);
-            doc.moveDown();
+        doc.moveTo(50, tableTop + 15)
+            .lineTo(450, tableTop + 15)
+            .stroke();
 
-            doc.text('Prices:');
-            doc.text(`  - ${orderPiece.price}`);
-            doc.moveDown();
-
-            // Add some space between different order pieces
-            if (i < orderPieces.length - 1) {
-                doc.addPage(); // Add a new page for each order piece except the last one
+        let totalSum = 0;
+        let rowIndex = 1;
+        orderPieces.forEach((orderPiece, index) => {
+            const price = parseFloat(orderPiece.price); // Ensure price is a number
+            if (isNaN(price)) {
+                console.error(`Invalid price value for order piece ID: ${orderPiece.id}`);
+                throw new Error('Invalid price value');
             }
-        }
 
-        // Finalize PDF file
+            const y = tableTop + 15 + (rowIndex * rowHeight);
+
+            doc.fontSize(10)
+                .text(index + 1, itemCodeX, y)
+                .text(orderPiece.Piece.name, descriptionX, y)
+                .text(orderPiece.quantity, quantityX, y)
+                .text(price.toFixed(2), priceX, y);
+
+            doc.moveTo(50, y + rowHeight - 5)
+                .lineTo(450, y + rowHeight - 5)
+                .stroke();
+
+            totalSum += price;
+            rowIndex++;
+        });
+
+        const lineBottom = tableTop + 15 + (rowIndex * rowHeight);
+        doc.moveTo(itemCodeX - 5, tableTop - 5).lineTo(itemCodeX - 5, lineBottom).stroke();
+        doc.moveTo(descriptionX - 5, tableTop - 5).lineTo(descriptionX - 5, lineBottom).stroke();
+        doc.moveTo(quantityX - 5, tableTop - 5).lineTo(quantityX - 5, lineBottom).stroke();
+        doc.moveTo(priceX - 5, tableTop - 5).lineTo(priceX - 5, lineBottom).stroke();
+        doc.moveTo(450, tableTop - 5).lineTo(450, lineBottom).stroke();
+
+        doc.fontSize(12).text(`Total: € ${totalSum.toFixed(2)}`, { align: 'right',lineGap: 10, margins:20 });
+
         doc.end();
 
-        // Wait for the PDF to be fully generated
         await new Promise((resolve) => doc.on('end', resolve));
 
         return result;
