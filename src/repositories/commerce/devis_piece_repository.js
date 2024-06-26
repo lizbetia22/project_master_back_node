@@ -27,7 +27,7 @@ exports.getAllDevisPieces = async () => {
                     include: [
                         {
                             model: User,
-                            attributes: ['name'],
+                            attributes: ['id','name'],
                         }
                     ]
                 }

@@ -1,6 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const devisPieceRepository = require('../../repositories/commerce/devis_piece_repository');
+const {Devis_piece} = require("../../models/commerce/devis_piece");
+const {sequelize} = require("../../models/database");
+const {Devis} = require("../../models/commerce/devis");
 router.post('/seeder', async (req, res) => {
     const devisPiecesData = [
         {
@@ -119,6 +122,52 @@ router.delete('/delete/:id', async (req, res) => {
         res.status(500).send('Failed to delete devis piece.');
     }
 });
+
+router.post('/create-devis', async (req, res) => {
+    const { id_user, date, deadline, pieces } = req.body;
+
+    if (!id_user || !date || !deadline || !pieces) {
+        return res.status(400).send('Missing required fields.');
+    }
+
+    const { id_piece, quantity, price } = pieces.reduce((acc, piece) => {
+        acc.id_piece.push(piece.id_piece);
+        acc.quantity.push(piece.quantity);
+        acc.price.push(piece.price);
+        return acc;
+    }, { id_piece: [], quantity: [], price: [] });
+
+    if (id_piece.length !== quantity.length || id_piece.length !== price.length) {
+        return res.status(400).send('Each piece in the pieces array must have id_piece, quantity, and price.');
+    }
+
+    try {
+        const result = await sequelize.transaction(async (t) => {
+            const devis = await Devis.create(
+                { id_user, date, deadline },
+                { transaction: t }
+            );
+
+            const devisPiecesData = id_piece.map((pieceId, index) => ({
+                id_devis: devis.id,
+                id_piece: pieceId,
+                quantity: quantity[index],
+                price: price[index]
+            }));
+
+            await Devis_piece.bulkCreate(devisPiecesData, { transaction: t });
+
+            return devis;
+        });
+
+        res.status(201).json(result);
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Failed to create devis and devis pieces.');
+    }
+});
+
+
 
 exports.initializeRoutes = () => router;
 

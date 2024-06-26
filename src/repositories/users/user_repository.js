@@ -59,6 +59,16 @@ exports.findUsersByRoleWorkshop = async () => {
     }
 }
 
+exports.findUsersByRoleCommerce = async () => {
+    try {
+        return await User.findAll({
+            where: { id_role: 2  },
+        });
+    } catch (error) {
+        throw error;
+    }
+}
+
 exports.getPostsByUserId = async (id_user) => {
     try {
         const user_id = id_user.id_user

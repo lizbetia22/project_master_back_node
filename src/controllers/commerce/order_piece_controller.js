@@ -1,6 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const orderPieceRepository = require('../../repositories/commerce/order_piece_repository');
+const {Order_piece} = require("../../models/commerce/order_piece");
+const {Order} = require("../../models/commerce/order");
+const {sequelize} = require("../../models/database");
 router.post('/seeder', async (req, res) => {
     const orderPiecesData = [
         {
@@ -120,6 +123,68 @@ router.delete('/delete/:id', async (req, res) => {
         res.status(500).send('Failed to delete order piece.');
     }
 });
+
+router.post('/create-order', async (req, res) => {
+    const { id_user, id_devis, date_order, pieces } = req.body;
+
+    if (!id_user || !id_devis || !date_order || !pieces) {
+        return res.status(400).send('Missing required fields.');
+    }
+
+    const { id_piece, quantity, price } = pieces.reduce((acc, piece) => {
+        acc.id_piece.push(piece.id_piece);
+        acc.quantity.push(piece.quantity);
+        acc.price.push(piece.price);
+        return acc;
+    }, { id_piece: [], quantity: [], price: [] });
+
+    if (id_piece.length !== quantity.length || id_piece.length !== price.length) {
+        return res.status(400).send('Each piece in the pieces array must have id_piece, quantity, and price.');
+    }
+
+    try {
+        const result = await sequelize.transaction(async (t) => {
+            // Step 1: Create the Order
+            const order = await Order.create(
+                { id_user, id_devis, date_order },
+                { transaction: t }
+            );
+
+            // Step 2: Create Order_pieces associated with the created Order
+            const orderPiecesData = id_piece.map((pieceId, index) => ({
+                id_order: order.id,
+                id_piece: pieceId,
+                quantity: quantity[index],
+                price: price[index]
+            }));
+
+            await Order_piece.bulkCreate(orderPiecesData, { transaction: t });
+
+            return order;
+        });
+
+        res.status(201).json(result);
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Failed to create order and order pieces.');
+    }
+});
+
+router.get('/pdf/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const pdfBuffer = await orderPieceRepository.createFacturePdf(id);
+
+        res.setHeader('Content-Disposition', `attachment; filename=facture_${id}.pdf`);
+        res.setHeader('Content-Type', 'application/pdf');
+        res.send(pdfBuffer);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Failed to create facture.');
+    }
+});
+
+
 
 exports.initializeRoutes = () => router;
 

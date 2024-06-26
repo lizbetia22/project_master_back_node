@@ -146,4 +146,14 @@ router.get('/posts/:id_user', async (req, res) => {
     }
 });
 
+router.get('/commerce', async (req, res) => {
+    try {
+        const users = await userRepository.findUsersByRoleCommerce();
+        res.status(200).json(users);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Failed to get users.');
+    }
+});
+
 exports.initializeRoutes = () => router;
