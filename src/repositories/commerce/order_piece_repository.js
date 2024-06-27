@@ -5,6 +5,7 @@ const {User} = require("../../models/users/user");
 const PDFDocument = require("pdfkit");
 const {createWriteStream} = require("fs");
 const PDFTable = require('pdfkit-table');
+const {Client_commerce} = require("../../models/commerce/client");
 
 exports.createOrderPiece = async (orderPieceData) => {
     try {
@@ -25,10 +26,10 @@ exports.getAllOrderPieces = async () => {
                 },
                 {
                     model: Order,
-                    attributes: ['id_user', 'date_order'],
+                    attributes: ['id_client', 'date_order'],
                     include: [
                         {
-                            model: User,
+                            model: Client_commerce,
                             attributes: ['name'],
                         },
                     ],
@@ -51,10 +52,10 @@ exports.getOrderPieceById = async (id) => {
                 },
                 {
                     model: Order,
-                    attributes: ['id_user', 'date_order'],
+                    attributes: ['id_client', 'date_order'],
                     include: [
                         {
-                            model: User,
+                            model: Client_commerce,
                             attributes: ['name'],
                         },
                     ],
@@ -97,10 +98,10 @@ exports.createFacturePdf = async (orderId) => {
                 },
                 {
                     model: Order,
-                    attributes: ['id_user', 'date_order'],
+                    attributes: ['id_client', 'date_order'],
                     include: [
                         {
-                            model: User,
+                            model: Client_commerce,
                             attributes: ['name'],
                         },
                     ],
@@ -110,6 +111,7 @@ exports.createFacturePdf = async (orderId) => {
 
         if (!orderPieces || orderPieces.length === 0) {
             console.error('No order pieces found for order ID:', orderId);
+            return null; // or handle this case as needed
         }
 
         const doc = new PDFDocument();
@@ -124,7 +126,7 @@ exports.createFacturePdf = async (orderId) => {
         doc.fontSize(16).text(`Facture - N°${orderId}`, { align: 'center' });
         doc.moveDown();
         doc.font('Helvetica-Bold').fontSize(12).text(`Date de commande: ${new Date(orderPieces[0].Order.date_order).toISOString().split('T')[0]}`);
-        doc.text(`Utilisateur: ${orderPieces[0].Order.User.name}`);
+        doc.text(`Nom du client: ${orderPieces[0].Order.Client.name}`);
         doc.moveDown();
 
         const tableTop = 150;
@@ -147,11 +149,19 @@ exports.createFacturePdf = async (orderId) => {
         let totalSum = 0;
         let rowIndex = 1;
         orderPieces.forEach((orderPiece, index) => {
-            const price = parseFloat(orderPiece.price); // Ensure price is a number
+            const price = parseFloat(orderPiece.price);
             if (isNaN(price)) {
                 console.error(`Invalid price value for order piece ID: ${orderPiece.id}`);
                 throw new Error('Invalid price value');
             }
+
+            const quantity = parseInt(orderPiece.quantity);
+            if (isNaN(quantity)) {
+                console.error(`Invalid quantity value for order piece ID: ${orderPiece.id}`);
+                throw new Error('Invalid quantity value');
+            }
+
+            const totalItemPrice = quantity * price;
 
             const y = tableTop + 15 + (rowIndex * rowHeight);
 
@@ -159,13 +169,13 @@ exports.createFacturePdf = async (orderId) => {
                 .text(index + 1, itemCodeX, y)
                 .text(orderPiece.Piece.name, descriptionX, y)
                 .text(orderPiece.quantity, quantityX, y)
-                .text(price.toFixed(2), priceX, y);
+                .text(totalItemPrice.toFixed(2), priceX, y);
 
             doc.moveTo(50, y + rowHeight - 5)
                 .lineTo(450, y + rowHeight - 5)
                 .stroke();
 
-            totalSum += price;
+            totalSum += totalItemPrice;
             rowIndex++;
         });
 
@@ -176,7 +186,7 @@ exports.createFacturePdf = async (orderId) => {
         doc.moveTo(priceX - 5, tableTop - 5).lineTo(priceX - 5, lineBottom).stroke();
         doc.moveTo(450, tableTop - 5).lineTo(450, lineBottom).stroke();
 
-        doc.fontSize(12).text(`Total: € ${totalSum.toFixed(2)}`, { align: 'right',lineGap: 10, margins:20 });
+        doc.fontSize(12).text(`Total: ${totalSum.toFixed(2)} €`, { align: 'right', lineGap: 10, margins: 20 });
 
         doc.end();
 

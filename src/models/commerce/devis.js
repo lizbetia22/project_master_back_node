@@ -7,7 +7,7 @@ exports.Devis = sequelize.define('Devis', {
         autoIncrement: true,
         primaryKey: true,
     },
-    id_user: {
+    id_client: {
         foreignKey:true,
         type: DataTypes.INTEGER,
         allowNull: false,
@@ -18,7 +18,7 @@ exports.Devis = sequelize.define('Devis', {
     },
     deadline: {
         type: DataTypes.DATE,
-        allowNull: false,
+        allowNull: true,
     },
 }, {
     tableName: 'devis',

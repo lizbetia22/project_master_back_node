@@ -5,27 +5,27 @@ const orderRepository = require('../../repositories/commerce/order_repository');
 router.post('/seeder', async (req, res) => {
     const ordersData = [
         {
-            id_user: 1,
+            id_client: 1,
             id_devis: 1,
             date_order: new Date(),
         },
         {
-            id_user: 2,
+            id_client: 2,
             id_devis: 2,
             date_order: new Date(),
         },
         {
-            id_user: 3,
+            id_client: 3,
             id_devis: 3,
             date_order: new Date(),
         },
         {
-            id_user: 4,
+            id_client: 4,
             id_devis: 4,
             date_order: new Date(),
         },
         {
-            id_user: 5,
+            id_client: 5,
             id_devis: 5,
             date_order: new Date(),
         },

@@ -3,6 +3,7 @@ const {Role} = require("../../models/users/roles");
 const {Piece} = require("../../models/workshop/piece");
 const {Devis} = require("../../models/commerce/devis");
 const {User} = require("../../models/users/user");
+const {Client_commerce} = require("../../models/commerce/client");
 
 exports.createDevisPiece = async (devisPieceData) => {
     try {
@@ -23,10 +24,10 @@ exports.getAllDevisPieces = async () => {
             },
                 {
                     model: Devis,
-                    attributes: ['id_user', 'date', 'deadline'],
+                    attributes: ['id_client', 'date', 'deadline'],
                     include: [
                         {
-                            model: User,
+                            model: Client_commerce,
                             attributes: ['id','name'],
                         }
                     ]
@@ -46,6 +47,8 @@ exports.getDevisPieceById = async (id) => {
     }
 };
 
+
+
 exports.updateDevisPiece = async (id, updateData) => {
     try {
         const devisPiece = await Devis_piece.findOne({ where: { id } });
@@ -61,6 +64,32 @@ exports.deleteDevisPiece = async (id) => {
         const devisPiece = await Devis_piece.findOne({ where: { id } });
         if (!devisPiece) console.error('Devis piece not found');
         return await devisPiece.destroy();
+    } catch (error) {
+        throw error;
+    }
+};
+
+exports.getDevisPiecesByClientId = async (id_client) => {
+    try {
+        return await Devis_piece.findAll({
+            include: [
+                {
+                    model: Devis,
+                    where: { id_client },
+                    attributes: ['id_client', 'date', 'deadline'],
+                    include: [
+                        {
+                            model: Client_commerce,
+                            attributes: ['id', 'name'],
+                        },
+                    ],
+                },
+                {
+                    model: Piece,
+                    attributes: ['name'],
+                },
+            ],
+        });
     } catch (error) {
         throw error;
     }

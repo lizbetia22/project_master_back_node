@@ -42,8 +42,10 @@ const orderPieceRoutes = require('../controllers/commerce/order_piece_controller
 const supplierRoutes = require('../controllers/commerce/supplier_controller');
 const companyOrderRoutes = require('../controllers/commerce/company_order_controller');
 const companyOrderPieceRoutes = require('../controllers/commerce/company_order_piece_controller');
+const clientsRoutes = require('../controllers/commerce/client_controller');
 
 const cors = require("cors");
+const {Client_commerce} = require("../models/commerce/client");
 
 dotenv.config()
 class WebServer {
@@ -158,17 +160,24 @@ class WebServer {
         User.hasMany(User_post, { foreignKey: 'id_user' });
         User_post.belongsTo(User, { foreignKey: 'id_user' });
 
-        User.hasMany(Devis, { foreignKey: 'id_user' });
-        Devis.belongsTo(User, { foreignKey: 'id_user' });
-
-        User.hasMany(Order, { foreignKey: 'id_user' });
-        Order.belongsTo(User, { foreignKey: 'id_user' });
+        // User.hasMany(Devis, { foreignKey: 'id_user' });
+        // Devis.belongsTo(User, { foreignKey: 'id_user' });
+        //
+        // User.hasMany(Order, { foreignKey: 'id_user' });
+        // Order.belongsTo(User, { foreignKey: 'id_user' });
 
         User.hasMany(Gamme, { foreignKey: 'id_user' });
         Gamme.belongsTo(User, { foreignKey: 'id_user' });
 
         User_post.belongsTo(User, { foreignKey: 'id_user' });
         User_post.belongsTo(Post, { foreignKey: 'id_post' });
+
+        //Client
+        Client_commerce.hasMany(Devis, { foreignKey: 'id_client' });
+        Devis.belongsTo(Client_commerce, { foreignKey: 'id_client' });
+
+        Client_commerce.hasMany(Order, { foreignKey: 'id_client' });
+        Order.belongsTo(Client_commerce, { foreignKey: 'id_client' });
 
     }
 
@@ -192,6 +201,7 @@ class WebServer {
         this.app.use('/supplier', supplierRoutes.initializeRoutes());
         this.app.use('/company-order', companyOrderRoutes.initializeRoutes());
         this.app.use('/company-order-piece', companyOrderPieceRoutes.initializeRoutes());
+        this.app.use('/client', clientsRoutes.initializeRoutes());
     }
 
     start() {

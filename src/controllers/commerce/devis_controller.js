@@ -5,27 +5,27 @@ const devisRepository = require('../../repositories/commerce/devis_repository');
 router.post('/seeder', async (req, res) => {
     const devisData = [
         {
-            id_user: 2,
+            id_client: 1,
             date: new Date('2024-01-01'),
             deadline: new Date('2024-01-31'),
         },
         {
-            id_user: 2,
+            id_client: 2,
             date: new Date('2024-02-01'),
             deadline: new Date('2024-02-28'),
         },
         {
-            id_user: 2,
+            id_client: 3,
             date: new Date('2024-03-01'),
             deadline: new Date('2024-03-31'),
         },
         {
-            id_user: 2,
+            id_client: 4,
             date: new Date('2024-04-01'),
             deadline: new Date('2024-04-30'),
         },
         {
-            id_user: 2,
+            id_client: 5,
             date: new Date('2024-05-01'),
             deadline: new Date('2024-05-31'),
         },

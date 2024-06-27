@@ -124,9 +124,9 @@ router.delete('/delete/:id', async (req, res) => {
 });
 
 router.post('/create-devis', async (req, res) => {
-    const { id_user, date, deadline, pieces } = req.body;
+    const { id_client, date, deadline, pieces } = req.body;
 
-    if (!id_user || !date || !deadline || !pieces) {
+    if (!id_client || !date || !deadline || !pieces) {
         return res.status(400).send('Missing required fields.');
     }
 
@@ -144,7 +144,7 @@ router.post('/create-devis', async (req, res) => {
     try {
         const result = await sequelize.transaction(async (t) => {
             const devis = await Devis.create(
-                { id_user, date, deadline },
+                { id_client, date, deadline },
                 { transaction: t }
             );
 
@@ -164,6 +164,17 @@ router.post('/create-devis', async (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).send('Failed to create devis and devis pieces.');
+    }
+});
+
+router.get('/piece/:id_client', async (req, res) => {
+    try {
+        const { id_client } = req.params;
+        const devisPieces = await devisPieceRepository.getDevisPiecesByClientId(id_client);
+        res.status(200).json(devisPieces);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Failed to get devis pieces by client.');
     }
 });
 

@@ -7,7 +7,7 @@ exports.Order = sequelize.define('Order', {
         autoIncrement: true,
         primaryKey: true,
     },
-    id_user: {
+    id_client: {
         foreignKey:true,
         type: DataTypes.INTEGER,
         allowNull: false,

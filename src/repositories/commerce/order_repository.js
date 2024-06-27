@@ -1,6 +1,7 @@
 const { Order } = require('../../models/commerce/order');
 const { Devis } = require('../../models/commerce/devis');
 const { User } = require('../../models/users/user');
+const {Client_commerce} = require("../../models/commerce/client");
 
 exports.createOrder = async (orderData) => {
     try {
@@ -17,16 +18,16 @@ exports.getAllOrders = async () => {
             include: [
                 {
                     model: Devis,
-                    attributes: ['id_user', 'date', 'deadline'],
+                    attributes: ['id_client', 'date', 'deadline'],
                     include: [
                         {
-                            model: User,
+                            model: Client_commerce,
                             attributes: ['name'],
                         },
                     ],
                 },
                 {
-                    model: User,
+                    model: Client_commerce,
                     attributes: ['name'],
                 },
             ],
@@ -43,16 +44,16 @@ exports.getOrderById = async (id) => {
             include: [
                 {
                     model: Devis,
-                    attributes: ['id_user', 'date', 'deadline'],
+                    attributes: ['id_client', 'date', 'deadline'],
                     include: [
                         {
-                            model: User,
+                            model: Client_commerce,
                             attributes: ['name'],
                         },
                     ],
                 },
                 {
-                    model: User,
+                    model: Client_commerce,
                     attributes: ['name'],
                 },
             ],
