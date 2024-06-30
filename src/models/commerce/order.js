@@ -12,11 +12,6 @@ exports.Order = sequelize.define('Order', {
         type: DataTypes.INTEGER,
         allowNull: false,
     },
-    id_devis: {
-        foreignKey: true,
-        type: DataTypes.INTEGER,
-        allowNull: false,
-    },
     date_order: {
         type: DataTypes.DATE,
         allowNull: false,

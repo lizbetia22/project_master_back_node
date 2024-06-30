@@ -101,16 +101,42 @@ router.get('/:id', async (req, res) => {
 });
 
 router.put('/update/:id', async (req, res) => {
+    const { id } = req.params; // The id of the Devis to update
+    const { id_client, date, deadline, pieces } = req.body;
+
     try {
-        const { id } = req.params;
-        const updateData = req.body;
-        const updatedDevisPiece = await devisPieceRepository.updateDevisPiece(id, updateData);
-        res.status(200).json(updatedDevisPiece);
+        const devis = await Devis.findOne({ where: { id } });
+        if (!devis) {
+            return res.status(404).send('Devis not found.');
+        }
+
+        await devis.update({ id_client, date, deadline });
+
+        const promises = pieces.map(async (piece) => {
+            const { id_piece, quantity, price } = piece;
+            const existingPiece = await Devis_piece.findOne({
+                where: {
+                    id_devis: id,
+                    id_piece
+                }
+            });
+
+            if (existingPiece) {
+                return existingPiece.update({ quantity, price });
+            } else {
+                return Devis_piece.create({ id_devis: id, id_piece, quantity, price });
+            }
+        });
+
+        await Promise.all(promises);
+
+        res.status(200).json({ message: 'Devis and Devis_piece updated successfully.' });
     } catch (err) {
         console.error(err);
-        res.status(500).send('Failed to update devis piece.');
+        res.status(500).send('Failed to update devis and devis pieces.');
     }
 });
+
 
 router.delete('/delete/:id', async (req, res) => {
     try {
@@ -124,9 +150,9 @@ router.delete('/delete/:id', async (req, res) => {
 });
 
 router.post('/create-devis', async (req, res) => {
-    const { id_client, date, deadline, pieces } = req.body;
+    const { id_client, date, pieces } = req.body;
 
-    if (!id_client || !date || !deadline || !pieces) {
+    if (!id_client || !date || !pieces) {
         return res.status(400).send('Missing required fields.');
     }
 
@@ -144,7 +170,7 @@ router.post('/create-devis', async (req, res) => {
     try {
         const result = await sequelize.transaction(async (t) => {
             const devis = await Devis.create(
-                { id_client, date, deadline },
+                { id_client, date },
                 { transaction: t }
             );
 
@@ -177,7 +203,6 @@ router.get('/piece/:id_client', async (req, res) => {
         res.status(500).send('Failed to get devis pieces by client.');
     }
 });
-
 
 
 exports.initializeRoutes = () => router;

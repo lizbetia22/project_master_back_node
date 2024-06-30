@@ -120,8 +120,8 @@ class WebServer {
         Devis.hasMany(Devis_piece, { foreignKey: 'id_devis' });
         Devis_piece.belongsTo(Devis, { foreignKey: 'id_devis' });
 
-        Devis.hasMany(Order, { foreignKey: 'id_devis' });
-        Order.belongsTo(Devis, { foreignKey: 'id_devis' });
+        // Devis.hasMany(Order, { foreignKey: 'id_devis' });
+        // Order.belongsTo(Devis, { foreignKey: 'id_devis' });
 
         // Order
         Order.hasMany(Order_piece, { foreignKey: 'id_order' });

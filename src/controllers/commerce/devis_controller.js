@@ -12,7 +12,7 @@ router.post('/seeder', async (req, res) => {
         {
             id_client: 2,
             date: new Date('2024-02-01'),
-            deadline: new Date('2024-02-28'),
+            deadline: null,
         },
         {
             id_client: 3,
@@ -22,7 +22,7 @@ router.post('/seeder', async (req, res) => {
         {
             id_client: 4,
             date: new Date('2024-04-01'),
-            deadline: new Date('2024-04-30'),
+            deadline: null,
         },
         {
             id_client: 5,

@@ -125,9 +125,9 @@ router.delete('/delete/:id', async (req, res) => {
 });
 
 router.post('/create-order', async (req, res) => {
-    const { id_client, id_devis, date_order, pieces } = req.body;
+    const { id_client, date_order, pieces } = req.body;
 
-    if (!id_client || !id_devis || !date_order || !pieces) {
+    if (!id_client || !date_order || !pieces) {
         return res.status(400).send('Missing required fields.');
     }
 
@@ -146,7 +146,7 @@ router.post('/create-order', async (req, res) => {
         const result = await sequelize.transaction(async (t) => {
             // Step 1: Create the Order
             const order = await Order.create(
-                { id_client, id_devis, date_order },
+                { id_client, date_order },
                 { transaction: t }
             );
 
