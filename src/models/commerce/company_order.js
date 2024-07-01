@@ -22,7 +22,7 @@ exports.Company_order = sequelize.define('Company_order', {
     },
     actual_delivery_date: {
         type: DataTypes.DATE,
-        allowNull: false,
+        allowNull: true,
     }
 }, {
     tableName: 'company_order',

@@ -46,13 +46,13 @@ exports.getAllCompanyOrderPieces = async () => {
                     include: [
                         {
                             model: Supplier,
-                            attributes: ['name', 'email'],
+                            attributes: ['id', 'name', 'email'],
                         },
                         ]
                 },
                 {
                     model: Piece,
-                    attributes: ['name']
+                    attributes: ['id','name']
                 }
                 ]
         });
@@ -86,7 +86,8 @@ exports.deleteCompanyOrderPiece = async (id) => {
     try {
         const companyOrderPiece = await Company_order_piece.findByPk(id);
         if (!companyOrderPiece) {
-           console.error('Company order piece not found');
+            console.error('Company order piece not found');
+            return null;
         }
         await companyOrderPiece.destroy();
         return companyOrderPiece;

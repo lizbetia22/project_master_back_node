@@ -9,7 +9,7 @@ router.post('/seeder', async (req, res) => {
             id_supplier: 1,
             date: new Date(),
             planned_delivery_date: new Date('2024-07-01'),
-            actual_delivery_date: new Date('2024-07-02'),
+            actual_delivery_date: null,
         },
         {
             id_supplier: 2,
@@ -27,7 +27,7 @@ router.post('/seeder', async (req, res) => {
             id_supplier: 4,
             date: new Date(),
             planned_delivery_date: new Date('2024-07-07'),
-            actual_delivery_date: new Date('2024-07-08'),
+            actual_delivery_date: null
         },
         {
             id_supplier: 5,

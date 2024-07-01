@@ -3,6 +3,10 @@ const router = express.Router();
 const { body, validationResult } = require('express-validator');
 const companyOrderPieceRepository = require('../../repositories/commerce/company_order_piece_repository');
 const {createCompanyOrder} = require("../../repositories/commerce/company_order_repository");
+const {Company_order} = require("../../models/commerce/company_order");
+const {Devis_piece} = require("../../models/commerce/devis_piece");
+const {Company_order_piece} = require("../../models/commerce/company_order_piece");
+const {sequelize} = require("../../models/database");
 
 router.post('/seeder', async (req, res) => {
     const companyOrderPiecesData = [
@@ -86,31 +90,66 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-router.put('/:id', async (req, res) => {
+router.put('/update/:id', async (req, res) => {
     const { id } = req.params;
-    const companyOrderPieceData = req.body;
+    const { id_supplier, date, planned_delivery_date, actual_delivery_date, pieces } = req.body;
+
+    const transaction = await sequelize.transaction();
+
     try {
-        const updatedCompanyOrderPiece = await companyOrderPieceRepository.updateCompanyOrderPiece(id, companyOrderPieceData);
-        res.status(200).json(updatedCompanyOrderPiece);
+        const order = await Company_order.findOne({ where: { id }, transaction });
+        if (!order) {
+            console.log('Order company not found.');
+            await transaction.rollback();
+            return res.status(404).send('Order company not found.');
+        }
+
+        await order.update({ id_supplier, date, planned_delivery_date, actual_delivery_date }, { transaction });
+
+        await Company_order_piece.destroy({ where: { id_order: id }, transaction });
+
+        const promises = pieces.map(async (piece) => {
+            const { id_piece, quantity, price } = piece;
+            return Company_order_piece.create({ id_order: id, id_piece, quantity, price }, { transaction });
+        });
+
+        await Promise.all(promises);
+
+        await transaction.commit();
+
+        res.status(200).json({ message: 'Order_company and Order_company_piece updated successfully.' });
     } catch (error) {
-        console.error(error);
+        console.error('Error updating company order piece:', error);
+        await transaction.rollback();
         res.status(500).send('Failed to update company order piece.');
     }
 });
 
-router.delete('/:id', async (req, res) => {
+
+router.delete('/delete/:id', async (req, res) => {
     const { id } = req.params;
+    const transaction = await sequelize.transaction();
     try {
-        const deletedCompanyOrderPiece = await companyOrderPieceRepository.deleteCompanyOrderPiece(id);
-        res.status(200).json(deletedCompanyOrderPiece);
+        await Company_order_piece.destroy({ where: { id_order: id }, transaction });
+        const deletedCompanyOrder = await Company_order.destroy({ where: { id }, transaction });
+
+        await transaction.commit();
+
+        if (!deletedCompanyOrder) {
+            return res.status(404).send('Company order not found.');
+        }
+
+        res.status(200).json({ message: 'Company order and associated pieces deleted successfully.' });
     } catch (error) {
-        console.error(error);
-        res.status(500).send('Failed to delete company order piece.');
+        console.error('Error deleting company order:', error);
+        await transaction.rollback();
+        res.status(500).send('Failed to delete company order and associated pieces.');
     }
 });
 
+
 router.post('/create-order', async (req, res) => {
-    const { id_supplier, date, planned_delivery_date, actual_delivery_date, pieces } = req.body;
+    const { id_supplier, date, planned_delivery_date, pieces } = req.body;
 
     try {
         if (!Array.isArray(pieces) || pieces.length === 0) {
@@ -120,8 +159,7 @@ router.post('/create-order', async (req, res) => {
         const newCompanyOrder = await createCompanyOrder({
             id_supplier,
             date,
-            planned_delivery_date,
-            actual_delivery_date
+            planned_delivery_date
         });
 
         const companyOrderPieces = pieces.map(piece => ({
