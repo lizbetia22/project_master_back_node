@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { body, validationResult } = require('express-validator');
 const companyOrderPieceRepository = require('../../repositories/commerce/company_order_piece_repository');
+const {createCompanyOrder} = require("../../repositories/commerce/company_order_repository");
 
 router.post('/seeder', async (req, res) => {
     const companyOrderPiecesData = [
@@ -105,6 +106,42 @@ router.delete('/:id', async (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).send('Failed to delete company order piece.');
+    }
+});
+
+router.post('/create-order', async (req, res) => {
+    const { id_supplier, date, planned_delivery_date, actual_delivery_date, pieces } = req.body;
+
+    try {
+        if (!Array.isArray(pieces) || pieces.length === 0) {
+            return res.status(400).send('Invalid pieces data.');
+        }
+
+        const newCompanyOrder = await createCompanyOrder({
+            id_supplier,
+            date,
+            planned_delivery_date,
+            actual_delivery_date
+        });
+
+        const companyOrderPieces = pieces.map(piece => ({
+            id_piece: piece.id_piece,
+            id_order: newCompanyOrder.id,
+            price: piece.price,
+            quantity: piece.quantity
+        }));
+
+        const newCompanyOrderPieces = await Promise.all(
+            companyOrderPieces.map(pieceData => companyOrderPieceRepository.createCompanyOrderPiece(pieceData))
+        );
+
+        res.status(201).json({
+            company_order: newCompanyOrder,
+            company_order_pieces: newCompanyOrderPieces
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Failed to create company order and/or company order pieces.');
     }
 });
 

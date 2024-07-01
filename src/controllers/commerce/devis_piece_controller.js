@@ -101,7 +101,7 @@ router.get('/:id', async (req, res) => {
 });
 
 router.put('/update/:id', async (req, res) => {
-    const { id } = req.params; // The id of the Devis to update
+    const { id } = req.params;
     const { id_client, date, deadline, pieces } = req.body;
 
     try {
@@ -112,20 +112,11 @@ router.put('/update/:id', async (req, res) => {
 
         await devis.update({ id_client, date, deadline });
 
+        await Devis_piece.destroy({ where: { id_devis: id } });
+
         const promises = pieces.map(async (piece) => {
             const { id_piece, quantity, price } = piece;
-            const existingPiece = await Devis_piece.findOne({
-                where: {
-                    id_devis: id,
-                    id_piece
-                }
-            });
-
-            if (existingPiece) {
-                return existingPiece.update({ quantity, price });
-            } else {
-                return Devis_piece.create({ id_devis: id, id_piece, quantity, price });
-            }
+            return Devis_piece.create({ id_devis: id, id_piece, quantity, price });
         });
 
         await Promise.all(promises);

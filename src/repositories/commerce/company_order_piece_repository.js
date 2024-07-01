@@ -46,7 +46,7 @@ exports.getAllCompanyOrderPieces = async () => {
                     include: [
                         {
                             model: Supplier,
-                            attributes: ['name'],
+                            attributes: ['name', 'email'],
                         },
                         ]
                 },
