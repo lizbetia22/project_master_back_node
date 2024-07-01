@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs');
 const {Role} = require("../../models/users/roles");
 const {User_post} = require("../../models/users/user_post");
 const {Post} = require("../../models/users/post");
+const {Piece} = require("../../models/workshop/piece");
 
 
 exports.createUser = async (userData) => {
@@ -27,7 +28,23 @@ exports.getAllUsers = async () => {
     try {
         return await User.findAll(
             {
-                order: [['id', 'ASC']]
+                order: [['id', 'ASC']],
+                include: [
+                    {
+                        model: Role,
+                        attributes: ['name'],
+                    },
+                    {
+                        model: User_post,
+                        attributes: ['id'],
+                        include : [
+                            {
+                                model: Post,
+                                attributes: ['name'],
+                            }
+                        ]
+                    },
+                ]
             }
         );
     } catch (error) {
