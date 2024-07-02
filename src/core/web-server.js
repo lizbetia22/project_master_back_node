@@ -160,12 +160,6 @@ class WebServer {
         User.hasMany(User_post, { foreignKey: 'id_user' });
         User_post.belongsTo(User, { foreignKey: 'id_user' });
 
-        // User.hasMany(Devis, { foreignKey: 'id_user' });
-        // Devis.belongsTo(User, { foreignKey: 'id_user' });
-        //
-        // User.hasMany(Order, { foreignKey: 'id_user' });
-        // Order.belongsTo(User, { foreignKey: 'id_user' });
-
         User.hasMany(Gamme, { foreignKey: 'id_user' });
         Gamme.belongsTo(User, { foreignKey: 'id_user' });
 

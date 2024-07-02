@@ -5,8 +5,8 @@ const router = express.Router();
 
 router.post('/seeder', async (req, res) => {
     const userPosts = [
-        { id_user: 4, id_post: [7, 1, 2, 4] },
-        { id_user: 5, id_post: [5, 6] },
+        { id_user: 3, id_post: [7, 1, 2, 4] },
+        { id_user: 4, id_post: [5, 6] },
     ];
 
     try {

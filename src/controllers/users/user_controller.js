@@ -156,4 +156,82 @@ router.get('/commerce', async (req, res) => {
     }
 });
 
+router.put('/update/:id_user',
+    body('name').isString(),
+    body('email').isEmail(),
+    body('id_role').isNumeric(),
+    body('password').isLength({ min: 4 }),
+    async (req, res) => {
+        try {
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(400).json({ errors: errors.array() });
+            }
+
+            const { id_user } = req.params;
+            const userData = req.body;
+
+            const updatedUser = await userRepository.updateUser(id_user, userData);
+
+            if (updatedUser.id_role === 3) {
+                const updatedPosts = await userRepository.updateUserPosts(id_user, userData.posts || []);
+            }
+
+            res.status(200).json(updatedUser);
+        } catch (error) {
+            console.error(error);
+            res.status(500).send('Failed to update user.');
+        }
+    }
+);
+
+router.post('/create-user',
+    body('name').notEmpty().isString(),
+    body('email').isEmail(),
+    body('password').isLength({ min: 4 }),
+    body('id_role').isInt(),
+    body('posts').optional().isArray(),
+    async (req, res) => {
+        try {
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(400).json({ errors: errors.array() });
+            }
+
+            const userData = req.body;
+            const createdUser = await userRepository.createUser(userData);
+
+            if (createdUser.id_role === 3 && userData.posts) {
+                await userRepository.addPostsToUser(createdUser.id, userData.posts);
+            }
+
+            res.status(201).json(createdUser);
+        } catch (error) {
+            console.error(error);
+            res.status(500).send('Failed to create user.');
+        }
+    }
+);
+
+router.delete('/delete/:id_user', async (req, res) => {
+    try {
+        const { id_user } = req.params;
+
+        const relatedRecords = await userRepository.checkUserReferences(id_user);
+
+        if (relatedRecords > 0) {
+            return res.status(400).send('Cannot delete user because they have related records.');
+        }
+
+        await userRepository.deleteUser(id_user);
+
+        res.status(200).send('User deleted successfully');
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Failed to delete user.');
+    }
+});
+
+
+
 exports.initializeRoutes = () => router;
