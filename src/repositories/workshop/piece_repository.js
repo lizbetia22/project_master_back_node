@@ -1,4 +1,9 @@
 const {Piece} = require("../../models/workshop/piece");
+const {Piece_ref} = require("../../models/workshop/pieces_ref");
+const {Devis_piece} = require("../../models/commerce/devis_piece");
+const {Order_piece} = require("../../models/commerce/order_piece");
+const {Company_order_piece} = require("../../models/commerce/company_order_piece");
+const {Gamme} = require("../../models/workshop/gamme");
 
 exports.getAllPieces = async () => {
     try {
@@ -41,15 +46,25 @@ exports.updatePiece = async (id, piece) => {
     }
 };
 
+exports.checkPieceReferences = async (id) => {
+    try {
+        const pieceRefs = await Piece_ref.count({ where: { id_piece_component: id } });
+        const createdPieceRefs = await Piece_ref.count({ where: { id_piece_create: id } });
+        const devisPieces = await Devis_piece.count({ where: { id_piece: id } });
+        const orderPieces = await Order_piece.count({ where: { id_piece: id } });
+        const companyOrderPieces = await Company_order_piece.count({ where: { id_piece: id } });
+        const gammes = await Gamme.count({ where: { id_piece: id } });
+        return pieceRefs + createdPieceRefs + devisPieces + orderPieces + companyOrderPieces + gammes;
+    } catch (error) {
+        throw error;
+    }
+};
+
 exports.deletePiece = async (id) => {
     try {
-        const deletedRows = await Piece.destroy({
-            where: { id }
+        return await Piece.destroy({
+            where: {id}
         });
-        if (deletedRows === 0) {
-            console.error('Piece not found');
-        }
-        return deletedRows;
     } catch (error) {
         throw error;
     }

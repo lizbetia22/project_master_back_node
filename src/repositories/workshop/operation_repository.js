@@ -1,6 +1,7 @@
 const { Operation } = require('../../models/workshop/operation');
 const {Post} = require("../../models/users/post");
 const {Machine} = require("../../models/workshop/machines");
+const {Gamme_operation} = require("../../models/workshop/gamme_operation");
 
 exports.createOperation = async (operationData) => {
     try {
@@ -38,6 +39,7 @@ exports.getOperationById = async (id) => {
         throw error;
     }
 };
+
 
 exports.updateOperation = async (id, updateData) => {
     try {

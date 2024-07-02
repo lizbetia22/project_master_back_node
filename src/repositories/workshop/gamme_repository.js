@@ -3,6 +3,7 @@ const {Piece} = require("../../models/workshop/piece");
 const {User} = require("../../models/users/user");
 const {Role} = require("../../models/users/roles");
 const {Gamme_operation} = require("../../models/workshop/gamme_operation");
+const {Gamme_production} = require("../../models/workshop/gamme_production");
 
 exports.getAllGammes = async () => {
     try {
@@ -58,11 +59,22 @@ exports.createGamme = async (gamme) => {
     }
 };
 
+exports.checkGammeReferences = async (id) => {
+    try {
+        const operationsCount = await Gamme_operation.count({ where: { id_gamme: id } });
+        const productionsCount = await Gamme_production.count({ where: { id_gamme: id } });
+
+        return operationsCount + productionsCount;
+    } catch (error) {
+        throw error;
+    }
+};
+
 exports.deleteGamme = async (id) => {
     try {
         const gamme = await Gamme.findByPk(id);
         if (!gamme) {
-            console.error(`Gamme with id ${id} not found`);
+          console.error(`Gamme with id ${id} not found`);
         }
         await gamme.destroy();
         return { message: `Gamme with id ${id} successfully deleted` };

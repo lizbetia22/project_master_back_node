@@ -61,13 +61,21 @@ router.get('/:id', async (req, res) => {
 
 router.delete('/delete/:id', async (req, res) => {
     try {
-        await gammeRepository.deleteGamme(req.params.id);
-        res.status(200).json({ message: 'Gamme successfully deleted' });
-    } catch (err) {
-        if (err.message.includes('not found')) {
-            res.status(404).json({ error: err.message });
+        const { id } = req.params;
+
+        const relatedRecords = await gammeRepository.checkGammeReferences(id);
+
+        if (relatedRecords > 0) {
+            return res.status(400).json({ message: 'Cannot delete gamme because it has related records.' });
+        }
+
+        const result = await gammeRepository.deleteGamme(id);
+        res.status(200).json(result);
+    } catch (error) {
+        if (error.message.includes('not found')) {
+            res.status(404).json({ error: error.message });
         } else {
-            res.status(500).json({ error: err.message });
+            res.status(500).json({ error: error.message });
         }
     }
 });

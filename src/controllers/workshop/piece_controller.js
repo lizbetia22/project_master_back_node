@@ -75,13 +75,22 @@ router.put('/update/:id', async (req, res) => {
 
 router.delete('/delete/:id', async (req, res) => {
     try {
-        const deletedRows = await pieceRepository.deletePiece(req.params.id);
+        const { id } = req.params;
+
+        const relatedRecords = await pieceRepository.checkPieceReferences(id);
+
+        if (relatedRecords > 0) {
+            return res.status(400).json({ message: 'Cannot delete piece because it has related records.' });
+        }
+        const deletedRows = await pieceRepository.deletePiece(id);
+
         if (deletedRows) {
             res.status(204).send();
         } else {
             res.status(404).json({ message: 'Piece not found' });
         }
     } catch (error) {
+        console.error(error);
         res.status(500).json({ message: error.message });
     }
 });
