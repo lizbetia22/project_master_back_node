@@ -59,7 +59,7 @@ router.get('/posts/gammes', async (req, res) => {
     try {
         const userPosts = await userPostRepository.getAllUserPosts();
         const userGammes = await gammePostRepository.getAllGammes();
-        console.log('zebi')
+
         console.log('userPosts:', JSON.stringify(userPosts, null, 2));
         console.log('userGammes:', JSON.stringify(userGammes, null, 2));
 
@@ -72,40 +72,34 @@ router.get('/posts/gammes', async (req, res) => {
                 postName: up.Post.name,
             }));
 
-        const result = filteredUsers.reduce((acc, user) => {
-            let userData = acc.find(u => u.id === user.id);
-            if (!userData) {
-                userData = {
+        const userMap = new Map();
+
+        filteredUsers.forEach(user => {
+            if (!userMap.has(user.id)) {
+                userMap.set(user.id, {
                     id: user.id,
                     userName: user.userName,
                     roleName: user.roleName,
                     postName: [],
                     gammeName: []
-                };
-                acc.push(userData);
+                });
             }
+            const userData = userMap.get(user.id);
             if (!userData.postName.includes(user.postName)) {
                 userData.postName.push(user.postName);
             }
-            return acc;
-        }, []);
-
-        console.log("result1", result)
+        });
 
         userGammes.forEach(ug => {
             if (ug.User.Role && (ug.User.Role.name === 'Workshop' || ug.User.Role.name === 'Responsible')) {
-                console.log("je rentre ici")
-                const userData = result.find(u => u.id === ug.User.id);
-                console.log("log1",userData)
-                console.log("log2", !userData.gammeName.includes(ug.name))
-                console.log("log3",ug.name)
-
+                const userData = userMap.get(ug.User.id);
                 if (userData && !userData.gammeName.includes(ug.name)) {
-                    console.log("je rentre la")
                     userData.gammeName.push(ug.name);
                 }
             }
         });
+
+        const result = Array.from(userMap.values());
 
         console.log('result:', JSON.stringify(result, null, 2));
 
@@ -114,6 +108,7 @@ router.get('/posts/gammes', async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 });
+
 
 
 exports.initializeRoutes = () => router;
