@@ -59,8 +59,7 @@ router.get('/posts/gammes', async (req, res) => {
     try {
         const userPosts = await userPostRepository.getAllUserPosts();
         const userGammes = await gammePostRepository.getAllGammes();
-
-        // Log the userPosts and userGammes for debugging
+        console.log('zebi')
         console.log('userPosts:', JSON.stringify(userPosts, null, 2));
         console.log('userGammes:', JSON.stringify(userGammes, null, 2));
 
@@ -69,7 +68,7 @@ router.get('/posts/gammes', async (req, res) => {
             .map(up => ({
                 id: up.id_user,
                 userName: up.User.name,
-                roleName: up.User.Role.name,  // Correctly assign the role name
+                roleName: up.User.Role.name,
                 postName: up.Post.name,
             }));
 
@@ -91,16 +90,19 @@ router.get('/posts/gammes', async (req, res) => {
             return acc;
         }, []);
 
+        console.log("result1", result)
+
         userGammes.forEach(ug => {
             if (ug.User.Role && (ug.User.Role.name === 'Workshop' || ug.User.Role.name === 'Responsible')) {
+                console.log("je rentre ici")
                 const userData = result.find(u => u.id === ug.User.id);
                 if (userData && !userData.gammeName.includes(ug.name)) {
+                    console.log("je rentre la")
                     userData.gammeName.push(ug.name);
                 }
             }
         });
 
-        // Log the final result for debugging
         console.log('result:', JSON.stringify(result, null, 2));
 
         res.json(result);
