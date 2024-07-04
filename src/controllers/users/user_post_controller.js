@@ -96,6 +96,7 @@ router.get('/posts/gammes', async (req, res) => {
             if (ug.User.Role && (ug.User.Role.name === 'Workshop' || ug.User.Role.name === 'Responsible')) {
                 console.log("je rentre ici")
                 const userData = result.find(u => u.id === ug.User.id);
+                console.log(userData, !userData.gammeName.includes(ug.name), ug.name)
                 if (userData && !userData.gammeName.includes(ug.name)) {
                     console.log("je rentre la")
                     userData.gammeName.push(ug.name);
